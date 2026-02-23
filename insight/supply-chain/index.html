@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M30 20 V80 M30 20 H55 Q75 20 75 40 T55 60 H30 M50 60 L75 85 M75 35 Q75 50 55 50 T35 65%22 fill=%22none%22 stroke=%22%23F9F8F4%22 stroke-width=%228%22 stroke-linecap=%22round%22/></svg>">
+    <title>Supply Chain | Respace Disaster</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-offwhite: #F9F8F4;
+            --text-dim: rgba(249, 248, 244, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #F9F8F4;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-offwhite);
+            font-family: 'Inter', -apple-system, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* 11s 生长轨迹 */
+        .comet-canvas {
+            position: absolute;
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            width: 120vh;
+            height: 120vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .trail-path {
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 1800;
+            stroke-dashoffset: 1800;
+            animation: growTrail 11s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes growTrail { to { stroke-dashoffset: 0; } }
+
+        /* 左侧固定栏：位置还原至标准 2.5rem/3rem */
+        .sidebar-fixed {
+            position: fixed;
+            top: 2.5rem;
+            left: 3rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .logo-svg { width: 35px; height: 35px; }
+        .back-btn {
+            font-size: 0.65rem;
+            letter-spacing: 0.2rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .back-btn:hover { color: var(--text-offwhite); }
+
+        /* 右上角导航：间距与位置还原 */
+        .top-nav {
+            position: fixed;
+            top: 2.5rem;
+            right: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            z-index: 1000;
+        }
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a {
+            color: var(--text-offwhite);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.3rem;
+            opacity: 0.5;
+            transition: 0.4s;
+        }
+        .nav-links a.active { opacity: 1; }
+
+        /* 左侧菜单列表：位置下移且间距修正 */
+        .side-menu {
+            margin-top: 15rem;
+            margin-left: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            z-index: 100;
+            width: 300px;
+            white-space: nowrap;
+        }
+        .menu-item {
+            font-size: 0.8rem; /* 字体大小还原 */
+            letter-spacing: 0.25rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            padding-left: 0;
+            border-left: 0px solid var(--accent);
+            text-transform: uppercase;
+        }
+        .menu-item:hover, .menu-item.active {
+            color: var(--text-offwhite);
+            padding-left: 1.2rem;
+            border-left: 1px solid var(--accent);
+        }
+
+        /* 中心展示区：防止过度靠右 */
+        .center-display {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center; /* 居中分布 */
+            align-items: center;
+            padding-left: 5%; 
+            z-index: 10;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: 1s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .module-grid.visible { opacity: 1; transform: translateX(0); }
+
+        /* 磨砂玻璃方块：尺寸修正 */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            width: 260px;
+            border-radius: 4px;
+            transition: 0.5s;
+            cursor: pointer;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transform: translateY(-5px);
+        }
+        .glass-card h4 { font-size: 0.75rem; letter-spacing: 0.2rem; margin: 0 0 1rem 0; font-weight: 300; text-transform: uppercase; color: #fff; }
+        .glass-card p { font-size: 0.7rem; line-height: 1.8; font-weight: 200; color: var(--text-dim); margin: 0; }
+
+        .game-tag { font-size: 0.6rem; letter-spacing: 0.2rem; color: #fff; opacity: 0.4; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.8rem; margin-top: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="comet-canvas">
+        <svg viewBox="0 0 1000 1000" style="width:100%; height:100%;">
+            <defs><linearGradient id="cometGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:var(--text-offwhite); stop-opacity:0" /><stop offset="100%" style="stop-color:var(--text-offwhite); stop-opacity:0.4" /></linearGradient></defs>
+            <path class="trail-path" d="M 950 100 C 400 300 400 700 950 900" stroke="url(#cometGrad)" />
+        </svg>
+    </div>
+
+    <div class="sidebar-fixed">
+        <svg class="logo-svg" viewBox="0 0 100 100"><path d="M30 20 V80 M30 20 H55 Q75 20 75 40 T55 60 H30 M50 60 L75 85 M75 35 Q75 50 55 50 T35 65" fill="none" stroke="#F9F8F4" stroke-width="8" stroke-linecap="round"/></svg>
+        <a href="../../education.html" class="back-btn">← Back</a>
+    </div>
+
+    <header class="top-nav">
+        <nav class="nav-links">
+            <a href="../../insight.html">INSIGHT</a>
+            <a href="../../studio.html">STUDIO</a>
+            <a href="../../education.html" class="active">EDUCATION</a>
+        </nav>
+        <div class="lang-control">
+            <svg style="width:22px;height:22px;stroke:#F9F8F4;fill:none;opacity:0.7" viewBox="0 0 24 24" stroke-width="1.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        </div>
+    </header>
+
+    <aside class="side-menu">
+        <div class="menu-item" onclick="loadContent('dispatch', this)" id="m1">EMERGENCY DISPATCH</div>
+        <div class="menu-item" onclick="loadContent('warehouse', this)" id="m2">PRE-POSITIONING</div>
+        <div class="menu-item" onclick="loadContent('digital', this)" id="m3">DIGITAL COORDINATION</div>
+        <div class="menu-item" onclick="loadContent('game', this)" id="m4">SIMULATION GAMES</div>
+    </aside>
+
+    <main class="center-display">
+        <div id="module-container" class="module-grid"></div>
+    </main>
+
+    <script>
+        const contentData = {
+            en: {
+                dispatch: [
+                    { t: "ROUTING", d: "OSM & GIS based dynamic logistics navigation for disaster areas." },
+                    { t: "ALLOCATION", d: "Strategic algorithms for precise humanitarian aid distribution." }
+                ],
+                warehouse: [
+                    { t: "LOCATION", d: "AI-driven selection for pre-positioned humanitarian warehouses." },
+                    { t: "STOCK", d: "Real-time auditing of supplies following WFP/Sphere standards." }
+                ],
+                digital: [
+                    { t: "SYNC", d: "Integrated coordination following UNOCHA international frameworks." },
+                    { t: "SHARING", d: "Standardized protocols for cross-agency rapid response collaboration." }
+                ],
+                game: [
+                    { t: "THE BEER GAME", d: "Simulate and understand the Bullwhip Effect in disaster supply chains.", link: "beer-game/", note: "INTERACTIVE SIMULATION" },
+                    { t: "LOGISTICS SIM", d: "Gamified training for emergency distribution and scheduling logic.", link: "#", note: "COMING SOON" }
+                ]
+            },
+            zh: {
+                dispatch: [
+                    { t: "路径优化", d: "基于 OSM 与 GIS 可达性分析的灾区动态物流导航。" },
+                    { t: "资源分配", d: "针对人道主义救援物资精准分配的战略性算法。" }
+                ],
+                warehouse: [
+                    { t: "选址策略", d: "基于 AI 的预置仓选址，确保响应覆盖范围最大化。" },
+                    { t: "库存管理", d: "参照 WFP 与 Sphere 标准的应急物资实时审计。" }
+                ],
+                digital: [
+                    { t: "各方同步", d: "遵循 UNOCHA 框架的集成化协同响应平台。" },
+                    { t: "数据共享", d: "用于跨机构快速响应协作的标准化协议系统。" }
+                ],
+                game: [
+                    { t: "啤酒游戏", d: "仿真并深度理解灾害供应链中的“牛鞭效应”。", link: "beer-game/", note: "互动仿真训练" },
+                    { t: "灾后物流模拟", d: "关于应急分发与调度逻辑的游戏化专业训练。", link: "#", note: "即将上线" }
+                ]
+            }
+        };
+
+        function loadContent(key, element) {
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+            const container = document.getElementById('module-container');
+            container.classList.remove('visible');
+            setTimeout(() => {
+                container.innerHTML = '';
+                contentData['en'][key].forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'glass-card';
+                    card.innerHTML = `<h4>${item.t}</h4><p>${item.d}</p>${item.note ? `<div class="game-tag">${item.note}</div>` : ''}`;
+                    if (item.link && item.link !== "#") card.onclick = () => window.location.href = item.link;
+                    container.appendChild(card);
+                });
+                container.classList.add('visible');
+            }, 300);
+        }
+
+        window.onload = () => loadContent('dispatch', document.getElementById('m1'));
+    </script>
+</body>
+</html>

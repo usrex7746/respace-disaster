@@ -24,11 +24,11 @@
             align-items: center;
         }
 
-        /* 1 & 2. 巨型彗星轨迹：整体向右移动，头部更厚重 */
+        /* 巨型彗星轨迹：整体向右移动，11秒生长 */
         .comet-canvas {
             position: absolute;
             top: 50%;
-            left: 55%; /* 整体向右移动 */
+            left: 55%; 
             transform: translate(-50%, -50%);
             width: 100vh;
             height: 100vh;
@@ -38,7 +38,7 @@
 
         .trail-path {
             fill: none;
-            stroke-width: 3; /* 头部更厚重的视觉基础 */
+            stroke-width: 3;
             stroke-linecap: round;
             stroke-dasharray: 1200;
             stroke-dashoffset: 1200;
@@ -77,7 +77,6 @@
         .nav-links a:hover { opacity: 1; }
 
         .lang-control { position: relative; cursor: pointer; }
-
         .globe-icon { width: 22px; height: 22px; stroke: var(--text-offwhite); fill: none; opacity: 0.6; }
 
         .lang-menu {
@@ -93,10 +92,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .lang-menu span { font-size: 0.7rem; letter-spacing: 0.15rem; opacity: 0.4; transition: 0.3s; }
+        .lang-menu span { font-size: 0.7rem; letter-spacing: 0.15rem; opacity: 0.4; transition: 0.3s; cursor: pointer; }
         .lang-menu span:hover { opacity: 1; }
 
-        /* 主体内容：保护文字区域背景 */
+        /* 主体内容 */
         .main-display {
             text-align: center;
             z-index: 10;
@@ -117,7 +116,7 @@
 
         @keyframes fadeIn { to { opacity: 0.9; } }
 
-        /* 3. 提早出现的空灵 Slogan */
+        /* 提早出现的空灵 Slogan */
         .slogan {
             margin-top: 1.8rem;
             font-size: 0.75rem;
@@ -127,8 +126,7 @@
             text-transform: uppercase;
             opacity: 0;
             filter: blur(10px);
-            /* 在标题出现后不久即开始淡入 (delay: 1s) */
-            animation: etherealFade 5s ease-out 1s forwards;
+            animation: etherealFade 5s ease-out 1.2s forwards;
         }
 
         @keyframes etherealFade { to { opacity: 1; filter: blur(0); } }
@@ -179,9 +177,9 @@
 
     <header class="top-nav">
         <nav class="nav-links">
-            <a href="#data">DATA</a>
-            <a href="#studio">STUDIO</a>
-            <a href="#education">EDUCATION</a>
+            <a href="insight.html">INSIGHT</a>
+            <a href="studio.html">STUDIO</a>
+            <a href="education.html">EDUCATION</a>
         </nav>
         <div class="lang-control" onclick="toggleLangMenu()">
             <svg class="globe-icon" viewBox="0 0 24 24" stroke-width="1.2">
