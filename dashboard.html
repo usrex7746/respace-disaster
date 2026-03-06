@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respace Disaster - Control Center</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-offwhite: #F9F8F4;
+            --text-dim: rgba(249, 248, 244, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-green: #37ff00;
+        }
+
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-offwhite);
+            font-family: 'Inter', -apple-system, sans-serif; height: 100vh; display: flex;
+            overflow: hidden;
+        }
+
+        /* 侧边导航栏 */
+        .sidebar {
+            width: 280px; border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; padding: 2.5rem 2rem;
+        }
+        .logo { width: 35px; height: 35px; margin-bottom: 4rem; cursor: pointer; transition: 0.3s; }
+        .logo:hover { opacity: 0.7; }
+        
+        .nav-menu { display: flex; flex-direction: column; gap: 2rem; flex: 1; }
+        .nav-item {
+            color: var(--text-dim); text-decoration: none; font-size: 0.75rem;
+            letter-spacing: 0.2rem; text-transform: uppercase; transition: 0.3s;
+            display: flex; align-items: center; gap: 1rem; cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--text-offwhite); }
+        .nav-item.active::before { 
+            content: ''; display: block; width: 4px; height: 4px; 
+            background: var(--text-offwhite); border-radius: 50%; 
+        }
+
+        /* 底部用户信息 */
+        .user-profile {
+            border-top: 1px solid var(--glass-border); padding-top: 2rem;
+            font-size: 0.65rem; letter-spacing: 0.1rem; color: var(--text-dim);
+        }
+        .user-email { color: var(--text-offwhite); margin-top: 0.5rem; word-break: break-all; }
+        .logout-btn { 
+            background: none; border: none; color: var(--text-dim); cursor: pointer; 
+            font-family: inherit; font-size: 0.65rem; text-transform: uppercase; 
+            letter-spacing: 0.1rem; padding: 0; margin-top: 1.5rem; transition: 0.3s;
+        }
+        .logout-btn:hover { color: #ff3333; }
+
+        /* 主内容区 */
+        .main-content { flex: 1; padding: 3rem 5rem; overflow-y: auto; }
+        .header-top { 
+            display: flex; justify-content: space-between; align-items: flex-end; 
+            margin-bottom: 4rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 2rem; 
+        }
+        
+        h1 { font-size: 1.5rem; font-weight: 200; letter-spacing: 0.5rem; text-transform: uppercase; margin: 0; }
+        .status-indicator { 
+            font-size: 0.7rem; letter-spacing: 0.2rem; display: flex; 
+            align-items: center; gap: 0.5rem; color: var(--accent-green); 
+        }
+        .status-dot { 
+            width: 6px; height: 6px; background-color: var(--accent-green); 
+            border-radius: 50%; animation: pulse 2s infinite; 
+        }
+
+        @keyframes pulse { 
+            0% { box-shadow: 0 0 0 0 rgba(55, 255, 0, 0.4); } 
+            70% { box-shadow: 0 0 0 6px rgba(55, 255, 0, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(55, 255, 0, 0); } 
+        }
+
+        /* 欢迎卡片 */
+        .welcome-card { 
+            border: 1px solid var(--glass-border); padding: 3rem; 
+            background: rgba(255,255,255,0.02); 
+        }
+        .welcome-card h2 { 
+            font-size: 1rem; letter-spacing: 0.3rem; margin-top: 0; 
+            margin-bottom: 1rem; font-weight: 300; 
+        }
+        .welcome-card p { 
+            color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; 
+            letter-spacing: 0.05rem; max-width: 600px; 
+        }
+
+        /* --- 修正后的移动端简单适配 --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); 
+                padding: 1.5rem; flex-direction: row; justify-content: space-between; align-items: center; 
+            }
+            .logo { margin-bottom: 0; }
+            .nav-menu, .user-profile { display: none; /* 移动端折叠菜单 */ }
+            .main-content { padding: 2rem; }
+            .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <svg class="logo" viewBox="0 0 100 100" onclick="window.location.href='index.html'">
+            <path d="M30 20 V80 M30 20 H55 Q75 20 75 40 T55 60 H30 M50 60 L75 85 M75 35 Q75 50 55 50 T35 65" fill="none" stroke="#F9F8F4" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        
+        <nav class="nav-menu">
+            <a class="nav-item active">OVERVIEW</a>
+            <a class="nav-item">THINKLOG MODELS</a>
+            <a class="nav-item">SUPPLY CHAIN</a>
+            <a class="nav-item">SETTINGS</a>
+        </nav>
+
+        <div class="user-profile">
+            CURRENT SESSION
+            <div class="user-email" id="displayUserEmail">loading...</div>
+            <button class="logout-btn" onclick="logout()">DISCONNECT</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header-top">
+            <h1>CONTROL CENTER</h1>
+            <div class="status-indicator">
+                <div class="status-dot"></div> SECURE CONNECTION
+            </div>
+        </header>
+
+        <div class="welcome-card">
+            <h2 id="greetingMsg">INITIALIZING...</h2>
+            <p id="welcomeDesc">Loading your disaster risk analysis and simulation models.</p>
+        </div>
+    </main>
+
+    <script>
+        // --- 控制台逻辑 ---
+        
+        // 1. 从 URL 获取刚才登录传过来的信息
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        // 这里如果是 'true'，说明是刚才后端发现数据库里没有这个邮箱，自动新建的
+        const isNewUser = urlParams.get('isNew') === 'true';
+
+        // 2. 权限校验：如果没有邮箱信息，直接踢回登录页
+        if (!email) {
+            window.location.href = 'login.html'; 
+        } else {
+            // 3. 把用户邮箱显示在左下角
+            document.getElementById('displayUserEmail').innerText = email;
+            
+            // 4. 根据新老用户，动态改变欢迎文案（高级定制感）
+            if (isNewUser) {
+                document.getElementById('greetingMsg').innerText = "ACCOUNT CREATED";
+                document.getElementById('welcomeDesc').innerText = "Welcome to Respace Disaster. Your profile has been automatically registered. You can now access the ThinkLog simulation modules and spatial datasets.";
+            } else {
+                document.getElementById('greetingMsg').innerText = "WELCOME BACK";
+                document.getElementById('welcomeDesc').innerText = "Your operational dashboard is ready. All previous simulation data and lean operation logs have been successfully synced.";
+            }
+        }
+
+        // 5. 登出逻辑
+        function logout() {
+            // 清除数据并跳回登录页
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
