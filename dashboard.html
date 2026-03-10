@@ -9,26 +9,49 @@
         :root {
             --bg-color: #000000;
             --text-offwhite: #F9F8F4;
-            --text-dim: rgba(249, 248, 244, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-dim: rgba(249, 248, 244, 0.4);
             --accent-green: #37ff00;
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * { box-sizing: border-box; }
         html, body {
             margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-offwhite);
-            font-family: 'Inter', -apple-system, sans-serif; height: 100vh; display: flex;
-            overflow: hidden;
+            font-family: 'Inter', -apple-system, sans-serif; height: 100vh; width: 100vw;
+            display: flex; overflow: hidden;
         }
 
-        /* 侧边导航栏 */
+        /* 顶部导航 */
+        header.global-nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 2.5rem 3rem; display: flex;
+            justify-content: space-between; align-items: center; z-index: 2000;
+        }
+        .nav-links { display: flex; gap: 2.5rem; margin-left: auto; margin-right: 2.5rem; }
+        .nav-links a { color: var(--text-offwhite); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.3rem; opacity: 0.5; transition: 0.4s; }
+        .nav-links a:hover { opacity: 1; }
+        
+        /* 右上角图标对齐主页 */
+        .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-icon { width: 22px; height: 22px; stroke: var(--text-offwhite); fill: none; stroke-width: 1.2; opacity: 0.7; transition: 0.3s; cursor: pointer; }
+        .nav-icon:hover { opacity: 1; }
+
+        /* 语言菜单 */
+        .lang-control { position: relative; }
+        .lang-menu {
+            position: absolute; right: 0; top: 3rem; background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(25px); padding: 1.2rem; display: none; flex-direction: column; gap: 1.2rem;
+            border: 1px solid var(--glass-border); min-width: 120px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .lang-menu span { font-size: 0.7rem; letter-spacing: 0.15rem; opacity: 0.5; transition: 0.3s; cursor: pointer; white-space: nowrap; }
+        .lang-menu span:hover { opacity: 1; color: #fff; }
+
+        /* 侧边栏 */
         .sidebar {
             width: 280px; border-right: 1px solid var(--glass-border);
-            display: flex; flex-direction: column; padding: 2.5rem 2rem;
+            display: flex; flex-direction: column; padding: 12rem 2rem 2.5rem;
+            z-index: 1001;
         }
-        .logo { width: 35px; height: 35px; margin-bottom: 4rem; cursor: pointer; transition: 0.3s; }
-        .logo:hover { opacity: 0.7; }
-        
         .nav-menu { display: flex; flex-direction: column; gap: 2rem; flex: 1; }
         .nav-item {
             color: var(--text-dim); text-decoration: none; font-size: 0.75rem;
@@ -36,141 +59,205 @@
             display: flex; align-items: center; gap: 1rem; cursor: pointer;
         }
         .nav-item:hover, .nav-item.active { color: var(--text-offwhite); }
-        .nav-item.active::before { 
-            content: ''; display: block; width: 4px; height: 4px; 
-            background: var(--text-offwhite); border-radius: 50%; 
-        }
+        .nav-item.active::before { content: ''; width: 4px; height: 4px; background: var(--text-offwhite); border-radius: 50%; }
 
-        /* 底部用户信息 */
-        .user-profile {
-            border-top: 1px solid var(--glass-border); padding-top: 2rem;
-            font-size: 0.65rem; letter-spacing: 0.1rem; color: var(--text-dim);
-        }
-        .user-email { color: var(--text-offwhite); margin-top: 0.5rem; word-break: break-all; }
-        .logout-btn { 
-            background: none; border: none; color: var(--text-dim); cursor: pointer; 
-            font-family: inherit; font-size: 0.65rem; text-transform: uppercase; 
-            letter-spacing: 0.1rem; padding: 0; margin-top: 1.5rem; transition: 0.3s;
-        }
-        .logout-btn:hover { color: #ff3333; }
+        .user-profile { border-top: 1px solid var(--glass-border); padding-top: 2rem; font-size: 0.65rem; letter-spacing: 0.1rem; color: var(--text-dim); }
+        .sub-toggle-area { margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+        
+        .switch { position: relative; width: 30px; height: 16px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 10px; width: 10px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent-green); }
+        input:checked + .slider:before { transform: translateX(14px); }
 
         /* 主内容区 */
-        .main-content { flex: 1; padding: 3rem 5rem; overflow-y: auto; }
-        .header-top { 
-            display: flex; justify-content: space-between; align-items: flex-end; 
-            margin-bottom: 4rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 2rem; 
-        }
+        .main-content { flex: 1; padding: 10rem 5rem 5rem; overflow-y: auto; scrollbar-width: none; }
+        .main-content::-webkit-scrollbar { display: none; }
+
+        .header-top { margin-bottom: 4rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 2.5rem; }
+        h1 { font-size: 1.5rem; font-weight: 200; letter-spacing: 0.6rem; text-transform: uppercase; margin: 0 0 0.8rem 0; }
         
-        h1 { font-size: 1.5rem; font-weight: 200; letter-spacing: 0.5rem; text-transform: uppercase; margin: 0; }
-        .status-indicator { 
-            font-size: 0.7rem; letter-spacing: 0.2rem; display: flex; 
-            align-items: center; gap: 0.5rem; color: var(--accent-green); 
+        .typewriter-status {
+            font-size: 0.65rem; letter-spacing: 0.2rem; color: var(--accent-green);
+            display: flex; align-items: center; gap: 0.6rem;
+            overflow: hidden; white-space: nowrap; width: 0;
+            border-right: 2px solid var(--accent-green);
+            animation: typing 3s steps(25, end) forwards, blink-caret .75s step-end infinite;
         }
-        .status-dot { 
-            width: 6px; height: 6px; background-color: var(--accent-green); 
-            border-radius: 50%; animation: pulse 2s infinite; 
-        }
+        .status-dot { width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--accent-green); }
 
-        @keyframes pulse { 
-            0% { box-shadow: 0 0 0 0 rgba(55, 255, 0, 0.4); } 
-            70% { box-shadow: 0 0 0 6px rgba(55, 255, 0, 0); } 
-            100% { box-shadow: 0 0 0 0 rgba(55, 255, 0, 0); } 
-        }
+        @keyframes typing { from { width: 0 } to { width: 230px } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-green); } }
 
-        /* 欢迎卡片 */
-        .welcome-card { 
-            border: 1px solid var(--glass-border); padding: 3rem; 
-            background: rgba(255,255,255,0.02); 
-        }
-        .welcome-card h2 { 
-            font-size: 1rem; letter-spacing: 0.3rem; margin-top: 0; 
-            margin-bottom: 1rem; font-weight: 300; 
-        }
-        .welcome-card p { 
-            color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; 
-            letter-spacing: 0.05rem; max-width: 600px; 
-        }
+        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 修正后的移动端简单适配 --- */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { 
-                width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); 
-                padding: 1.5rem; flex-direction: row; justify-content: space-between; align-items: center; 
-            }
-            .logo { margin-bottom: 0; }
-            .nav-menu, .user-profile { display: none; /* 移动端折叠菜单 */ }
-            .main-content { padding: 2rem; }
-            .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
-        }
+        .welcome-card { border: 1px solid var(--glass-border); padding: 3rem; background: rgba(255,255,255,0.01); }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <svg class="logo" viewBox="0 0 100 100" onclick="window.location.href='index.html'">
+    <header class="global-nav">
+        <svg style="width:35px; height:35px; cursor:pointer;" viewBox="0 0 100 100" onclick="location.href='index.html'">
             <path d="M30 20 V80 M30 20 H55 Q75 20 75 40 T55 60 H30 M50 60 L75 85 M75 35 Q75 50 55 50 T35 65" fill="none" stroke="#F9F8F4" stroke-width="8" stroke-linecap="round"/>
         </svg>
+        <nav class="nav-links">
+            <a href="insight.html">INSIGHT</a>
+            <a href="studio.html">STUDIO</a>
+            <a href="education.html">EDUCATION</a>
+            <a href="game/index.html">GAME</a>
+        </nav>
         
+        <div class="nav-actions">
+            <div class="lang-control">
+                <svg class="nav-icon" viewBox="0 0 24 24" id="langBtn"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <div class="lang-menu" id="langMenu">
+                    <span onclick="setLang('en')">ENGLISH</span>
+                    <span onclick="setLang('zh')">中文</span>
+                    <span onclick="setLang('jp')">日本語</span>
+                    <span onclick="setLang('es')">ESPAÑOL</span>
+                    <span onclick="setLang('fr')">FRANÇAIS</span>
+                </div>
+            </div>
+            <a href="login.html" title="Sign In">
+                <svg class="nav-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <aside class="sidebar">
         <nav class="nav-menu">
-            <a class="nav-item active">OVERVIEW</a>
-            <a class="nav-item">THINKLOG MODELS</a>
-            <a class="nav-item">SUPPLY CHAIN</a>
-            <a class="nav-item">SETTINGS</a>
+            <a class="nav-item active" onclick="showTab('overview', this)" data-i18n="menu_overview">OVERVIEW</a>
+            <a class="nav-item" onclick="showTab('models', this)" data-i18n="menu_models">THINKLOG MODELS</a>
+            <a class="nav-item" onclick="showTab('settings', this)" data-i18n="menu_settings">SETTINGS</a>
         </nav>
 
         <div class="user-profile">
-            CURRENT SESSION
-            <div class="user-email" id="displayUserEmail">loading...</div>
-            <button class="logout-btn" onclick="logout()">DISCONNECT</button>
+            <span data-i18n="label_session">CURRENT SESSION</span>
+            <div id="displayUserEmail" style="color: var(--text-offwhite); margin-top: 0.5rem; font-size: 0.7rem; letter-spacing: 0.05rem;">loading...</div>
+            
+            <div class="sub-toggle-area">
+                <span style="font-size: 0.55rem; letter-spacing: 0.1rem; opacity: 0.9;" data-i18n="label_sub">SUBSCRIBE TO UPDATES</span>
+                <label class="switch"><input type="checkbox" id="subSwitch"><span class="slider"></span></label>
+            </div>
+            <button onclick="location.href='login.html'" style="background:none; border:none; color:var(--text-dim); font-size:0.6rem; cursor:pointer; margin-top:1.5rem; letter-spacing:0.1rem; padding:0;" data-i18n="btn_disconnect">DISCONNECT</button>
         </div>
     </aside>
 
     <main class="main-content">
         <header class="header-top">
             <h1>CONTROL CENTER</h1>
-            <div class="status-indicator">
-                <div class="status-dot"></div> SECURE CONNECTION
+            <div class="typewriter-status">
+                <span class="status-dot"></span>
+                <span data-i18n="status_secure">SECURE CONNECTION</span>
             </div>
         </header>
 
-        <div class="welcome-card">
-            <h2 id="greetingMsg">INITIALIZING...</h2>
-            <p id="welcomeDesc">Loading your disaster risk analysis and simulation models.</p>
+        <div id="overview" class="tab-content active">
+            <div class="welcome-card">
+                <h2 id="greetingMsg" style="font-size: 1rem; letter-spacing: 0.3rem; font-weight: 300; margin-top:0;">INITIALIZING...</h2>
+                <p id="welcomeDesc" style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; max-width: 600px;" data-i18n="overview_desc">Loading your disaster risk analysis models and operational datasets.</p>
+            </div>
+        </div>
+
+        <div id="models" class="tab-content">
+            <p style="color: var(--text-dim); letter-spacing: 0.1rem;" data-i18n="models_loading">Model repository is currently being indexed...</p>
+        </div>
+
+        <div id="settings" class="tab-content">
+            <p style="color: var(--text-dim); letter-spacing: 0.1rem;" data-i18n="settings_desc">User preferences and system configuration.</p>
         </div>
     </main>
 
     <script>
-        // --- 控制台逻辑 ---
-        
-        // 1. 从 URL 获取刚才登录传过来的信息
-        const urlParams = new URLSearchParams(window.location.search);
-        const email = urlParams.get('email');
-        // 这里如果是 'true'，说明是刚才后端发现数据库里没有这个邮箱，自动新建的
-        const isNewUser = urlParams.get('isNew') === 'true';
-
-        // 2. 权限校验：如果没有邮箱信息，直接踢回登录页
-        if (!email) {
-            window.location.href = 'login.html'; 
-        } else {
-            // 3. 把用户邮箱显示在左下角
-            document.getElementById('displayUserEmail').innerText = email;
-            
-            // 4. 根据新老用户，动态改变欢迎文案（高级定制感）
-            if (isNewUser) {
-                document.getElementById('greetingMsg').innerText = "ACCOUNT CREATED";
-                document.getElementById('welcomeDesc').innerText = "Welcome to Respace Disaster. Your profile has been automatically registered. You can now access the ThinkLog simulation modules and spatial datasets.";
-            } else {
-                document.getElementById('greetingMsg').innerText = "WELCOME BACK";
-                document.getElementById('welcomeDesc').innerText = "Your operational dashboard is ready. All previous simulation data and lean operation logs have been successfully synced.";
+        const i18n = {
+            en: {
+                menu_overview: "OVERVIEW", menu_models: "THINKLOG MODELS", menu_settings: "SETTINGS",
+                label_session: "CURRENT SESSION", label_sub: "SUBSCRIBE TO UPDATES", btn_disconnect: "DISCONNECT",
+                status_secure: "SECURE CONNECTION", overview_desc: "Loading disaster risk analysis models and datasets.",
+                models_loading: "Model repository is currently being indexed...", settings_desc: "User preferences and system configuration.",
+                greet_welcome: "WELCOME BACK", greet_created: "ACCOUNT CREATED"
+            },
+            zh: {
+                menu_overview: "总览", menu_models: "THINKLOG 模型", menu_settings: "设置",
+                label_session: "当前会话", label_sub: "订阅更新", btn_disconnect: "断开连接",
+                status_secure: "安全连接已建立", overview_desc: "正在加载灾害风险分析模型和操作数据集。",
+                models_loading: "模型库正在索引中...", settings_desc: "用户偏好和系统配置。",
+                greet_welcome: "欢迎回来", greet_created: "账号已创建"
+            },
+            jp: {
+                menu_overview: "概要", menu_models: "THINKLOG モデル", menu_settings: "設定",
+                label_session: "現在のセッション", label_sub: "アップデートを購読", btn_disconnect: "切断する",
+                status_secure: "安全な接続", overview_desc: "災害リスク分析モデルとデータセットをロードしています。",
+                models_loading: "モデルリポジトリをインデックス中...", settings_desc: "ユーザー設定とシステム構成。",
+                greet_welcome: "おかえりなさい", greet_created: "アカウント作成完了"
+            },
+            es: {
+                menu_overview: "RESUMEN", menu_models: "MODELOS THINKLOG", menu_settings: "AJUSTES",
+                label_session: "SESIÓN ACTUAL", label_sub: "SUSCRIBIRSE A NOVEDADES", btn_disconnect: "DESCONECTAR",
+                status_secure: "CONEXIÓN SEGURA", overview_desc: "Cargando modelos de análisis de riesgo y datos.",
+                models_loading: "Indexando repositorio de modelos...", settings_desc: "Preferencias de usuario y configuración.",
+                greet_welcome: "BIENVENIDO", greet_created: "CUENTA CREADA"
+            },
+            fr: {
+                menu_overview: "APERÇU", menu_models: "MODÈLES THINKLOG", menu_settings: "PARAMÈTRES",
+                label_session: "SESSION ACTUELLE", label_sub: "S'ABONNER AUX MISES À JOUR", btn_disconnect: "DÉCONNECTER",
+                status_secure: "CONNEXION SÉCURISÉE", overview_desc: "Chargement des modèles d'analyse des risques.",
+                models_loading: "Indexation du référentiel de modèles...", settings_desc: "Préférences utilisateur et configuration.",
+                greet_welcome: "BON RETOUR", greet_created: "COMPTE CRÉÉ"
             }
+        };
+
+        function showTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
         }
 
-        // 5. 登出逻辑
-        function logout() {
-            // 清除数据并跳回登录页
-            window.location.href = 'login.html';
+        const langBtn = document.getElementById('langBtn');
+        const langMenu = document.getElementById('langMenu');
+
+        langBtn.onclick = (e) => {
+            e.stopPropagation();
+            langMenu.style.display = langMenu.style.display === 'flex' ? 'none' : 'flex';
+        };
+
+        function setLang(l) {
+            localStorage.setItem('respace_lang', l);
+            applyLang(l);
+            langMenu.style.display = 'none';
         }
+
+        function applyLang(l) {
+            const set = i18n[l] || i18n.en;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(set[key]) el.innerText = set[key];
+            });
+            updateGreeting(l);
+        }
+
+        function updateGreeting(l) {
+            const set = i18n[l] || i18n.en;
+            const isNew = new URLSearchParams(window.location.search).get('isNew') === 'true';
+            document.getElementById('greetingMsg').innerText = isNew ? set.greet_created : set.greet_welcome;
+        }
+
+        document.onclick = () => { langMenu.style.display = 'none'; };
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('respace_lang') || 'en';
+            applyLang(savedLang);
+            
+            const email = new URLSearchParams(window.location.search).get('email') || 'rex.zhanming.zhong@gmail.com';
+            document.getElementById('displayUserEmail').innerText = email;
+        };
     </script>
 </body>
 </html>
