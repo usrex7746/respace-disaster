@@ -23,7 +23,6 @@
             display: flex; flex-direction: column;
         }
 
-        /* 顶部导航对齐主页布局 */
         .header-left { position: fixed; top: 2.5rem; left: 3rem; z-index: 1001; cursor: pointer; }
         .logo-svg { width: 35px; height: 35px; transition: 0.3s; }
         .top-nav {
@@ -31,7 +30,6 @@
             display: flex; align-items: center; gap: 2.5rem; z-index: 1000;
         }
         .nav-links { display: flex; gap: 2.5rem; }
-        /* 导航强制英文不翻译 */
         .nav-links a {
             color: var(--text-offwhite); text-decoration: none; font-size: 0.85rem;
             letter-spacing: 0.3rem; opacity: 0.5; transition: 0.4s;
@@ -41,7 +39,6 @@
         .nav-actions { display: flex; align-items: center; gap: 1.5rem; }
         .nav-icon { width: 26px; height: 26px; stroke: var(--text-offwhite); fill: none; stroke-width: 1.5; opacity: 0.7; transition: 0.3s; cursor: pointer; }
 
-        /* 语言菜单 */
         .lang-control { position: relative; }
         .lang-menu {
             position: absolute; right: 0; top: 3.5rem; background: rgba(15, 15, 15, 0.98);
@@ -51,7 +48,6 @@
         .lang-menu span { font-size: 0.7rem; letter-spacing: 0.15rem; opacity: 0.5; transition: 0.3s; cursor: pointer; }
         .lang-menu span:hover { opacity: 1; color: #fff; }
 
-        /* 彗星背景 */
         .comet-canvas {
             position: absolute; top: 50%; left: 55%; transform: translate(-50%, -50%);
             width: 120vh; height: 120vh; z-index: 0; pointer-events: none; opacity: 0.15;
@@ -59,14 +55,12 @@
         .trail-path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1800; stroke-dashoffset: 1800; animation: growTrail 11s forwards; }
         @keyframes growTrail { to { stroke-dashoffset: 0; } }
 
-        /* 验证主体动画对齐主页标题 */
         .auth-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 10; padding: 0 2rem; }
         .auth-box { 
             width: 100%; max-width: 450px; text-align: center; 
             animation: contentFade 3s ease-out;
         }
         
-        /* 标题尺寸放大至 2.2rem 对齐主页 */
         .auth-box h2 { 
             font-size: 2.2rem; font-weight: 100; letter-spacing: 1.5rem; 
             text-transform: uppercase; margin: 0 0 2rem 0; transform: translateX(0.75rem);
@@ -107,7 +101,6 @@
             .top-nav { position: fixed !important; top: 0; left: 0; right: 0; width: 100%; background-color: rgba(0,0,0,0.95); padding: 1.5rem 2rem; flex-direction: row; justify-content: flex-end; gap: 1.5rem; z-index: 2000; }
             .nav-links { display: none; }
             .header-left { top: 1.5rem; left: 1.5rem; }
-            .auth-box h2 { font-size: 1.6rem; letter-spacing: 0.8rem; }
         }
     </style>
 </head>
@@ -178,7 +171,7 @@
                 </div>
                 <button class="submit-btn" id="authBtn" onclick="handleAuth()" data-i18n="btn_confirm">CONFIRM</button>
                 <div class="footer-links">
-                    <a class="text-btn" data-i18n="btn_forgot" onclick="alert('Offline')">FORGOT PASSWORD?</a>
+                    <a class="text-btn" data-i18n="btn_forgot" onclick="alert('System Offline')">FORGOT PASSWORD?</a>
                     <a class="text-btn" data-i18n="btn_back" onclick="resetFlow()">← BACK</a>
                 </div>
             </div>
@@ -187,92 +180,40 @@
 
     <script>
         const i18n = {
-            en: {
-                auth_title: "ACCESS", email_desc: "Enter email to connect to the Control Center.",
-                label_email: "EMAIL ADDRESS", btn_continue: "CONTINUE", divider_or: "OR",
-                pass_desc_default: "Identity verification required.", label_pass: "PASSWORD",
-                btn_confirm: "CONFIRM", btn_forgot: "FORGOT PASSWORD?", btn_back: "← BACK",
-                pass_new: "New account detected.", pass_welcome: "Welcome back.",
-                label_create: "CREATE PASSWORD"
-            },
-            zh: {
-                auth_title: "访问", email_desc: "输入邮箱以连接控制中心。",
-                label_email: "电子邮箱地址", btn_continue: "继续", divider_or: "或",
-                pass_desc_default: "需要身份验证。", label_pass: "密码",
-                btn_confirm: "确认", btn_forgot: "忘记密码？", btn_back: "← 返回",
-                pass_new: "检测到新账号。", pass_welcome: "欢迎回来。",
-                label_create: "创建密码"
-            },
-            jp: {
-                auth_title: "アクセス", email_desc: "コントロールセンターに接続するためのメールを入力してください。",
-                label_email: "メールアドレス", btn_continue: "次へ", divider_or: "または",
-                pass_desc_default: "本人確認が必要です。", label_pass: "パスワード",
-                btn_confirm: "確認", btn_forgot: "パスワードを忘れた場合", btn_back: "← 戻る",
-                pass_new: "新しいアカウントを検出しました。", pass_welcome: "おかえりなさい。",
-                label_create: "パスワードを作成"
-            },
-            es: {
-                auth_title: "ACCESO", email_desc: "Ingrese correo para conectar al Centro de Control.",
-                label_email: "DIRECCIÓN DE CORREO", btn_continue: "CONTINUAR", divider_or: "O",
-                pass_desc_default: "Verificación de identidad requerida.", label_pass: "CONTRASEÑA",
-                btn_confirm: "CONFIRMAR", btn_forgot: "¿OLVIDÓ SU CONTRASEÑA?", btn_back: "← VOLVER",
-                pass_new: "Nueva cuenta detectada.", pass_welcome: "Bienvenido de nuevo.",
-                label_create: "CREAR CONTRASEÑA"
-            },
-            fr: {
-                auth_title: "ACCÈS", email_desc: "Entrez votre email pour accéder au Centre de Contrôle.",
-                label_email: "ADRESSE EMAIL", btn_continue: "CONTINUER", divider_or: "OU",
-                pass_desc_default: "Vérification d'identité requise.", label_pass: "MOT DE PASSE",
-                btn_confirm: "CONFIRMER", btn_forgot: "MOT DE PASSE OUBLIÉ ?", btn_back: "← RETOUR",
-                pass_new: "Nouveau compte détecté.", pass_welcome: "Bon retour.",
-                label_create: "CRÉER UN MOT DE PASSE"
-            }
+            en: { auth_title: "ACCESS", email_desc: "Enter email to connect to the Control Center.", label_email: "EMAIL ADDRESS", btn_continue: "CONTINUE", divider_or: "OR", pass_desc_default: "Identity verification required.", label_pass: "PASSWORD", btn_confirm: "CONFIRM", btn_forgot: "FORGOT PASSWORD?", btn_back: "← BACK", pass_new: "New account detected.", pass_welcome: "Welcome back.", label_create: "CREATE PASSWORD" },
+            zh: { auth_title: "访问", email_desc: "输入邮箱以连接控制中心。", label_email: "电子邮箱地址", btn_continue: "继续", divider_or: "或", pass_desc_default: "需要身份验证。", label_pass: "密码", btn_confirm: "确认", btn_forgot: "忘记密码？", btn_back: "← 返回", pass_new: "检测到新账号。", pass_welcome: "欢迎回来。", label_create: "创建密码" },
+            jp: { auth_title: "アクセス", email_desc: "コントロールセンターに接続するためのメールを入力してください。", label_email: "メールアドレス", btn_continue: "次へ", divider_or: "または", pass_desc_default: "本人確認が必要です。", label_pass: "パスワード", btn_confirm: "確認", btn_forgot: "パスワードを忘れた場合", btn_back: "← 戻る", pass_new: "新しいアカウントを検出しました。", pass_welcome: "おかえりなさい。", label_create: "パスワードを作成" },
+            es: { auth_title: "ACCESO", email_desc: "Ingrese correo para conectar al Centro de Control.", label_email: "DIRECCIÓN DE CORREO", btn_continue: "CONTINUAR", divider_or: "O", pass_desc_default: "Verificación de identidad requerida.", label_pass: "CONTRASEÑA", btn_confirm: "CONFIRMAR", btn_forgot: "¿OLVIDÓ SU CONTRASEÑA?", btn_back: "← VOLVER", pass_new: "Nueva cuenta detectada.", pass_welcome: "Bienvenido de nuevo.", label_create: "CREAR CONTRASEÑA" },
+            fr: { auth_title: "ACCÈS", email_desc: "Entrez votre email pour accéder au Centre de Contrôle.", label_email: "ADRESSE EMAIL", btn_continue: "CONTINUER", divider_or: "OU", pass_desc_default: "Vérification d'identité requise.", label_pass: "MOT DE PASSE", btn_confirm: "CONFIRMER", btn_forgot: "MOT DE PASSE OUBLIÉ ?", btn_back: "← RETOUR", pass_new: "Nouveau compte détecté.", pass_welcome: "Bon retour.", label_create: "CRÉER UN MOT DE PASSE" }
         };
 
-        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3000' : 'https://respace-disaster.com';
+        // --- 核心修复：相对路径识别 ---
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:3000' : '';
 
         let isNewUser = false;
         const langBtn = document.getElementById('langBtn');
         const langMenu = document.getElementById('langMenu');
 
-        // 语言切换核心
-        langBtn.onclick = (e) => {
-            e.stopPropagation();
-            langMenu.style.display = langMenu.style.display === 'flex' ? 'none' : 'flex';
-        };
-
-        function setLang(l) {
-            localStorage.setItem('respace_lang', l);
-            applyLang(l);
-            langMenu.style.display = 'none';
-        }
-
+        langBtn.onclick = (e) => { e.stopPropagation(); langMenu.style.display = langMenu.style.display === 'flex' ? 'none' : 'flex'; };
+        function setLang(l) { localStorage.setItem('respace_lang', l); applyLang(l); langMenu.style.display = 'none'; }
         function applyLang(l) {
             const set = i18n[l] || i18n.en;
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if(set[key]) el.innerText = set[key];
             });
-            // 动态文案适配
             if(document.getElementById('step-password').style.display === 'block') {
                 document.getElementById('passTitle').innerText = isNewUser ? set.pass_new : set.pass_welcome;
                 document.getElementById('passLabel').innerText = isNewUser ? set.label_create : set.label_pass;
             }
         }
 
-        document.onclick = () => { langMenu.style.display = 'none'; };
-
         function togglePassword() {
             const passInput = document.getElementById('userPassword');
             const eyeIcon = document.getElementById('eyeIcon');
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                eyeIcon.style.color = 'var(--accent-green)';
-            } else {
-                passInput.type = 'password';
-                eyeIcon.style.color = 'currentColor';
-            }
+            if (passInput.type === 'password') { passInput.type = 'text'; eyeIcon.style.color = 'var(--accent-green)'; } 
+            else { passInput.type = 'password'; eyeIcon.style.color = 'currentColor'; }
         }
 
         async function checkUser() {
@@ -280,28 +221,22 @@
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
             const btn = document.getElementById('continueBtn');
             btn.disabled = true;
-
             try {
-                const res = await fetch(`${API_BASE_URL}/api/check-user`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
+                const res = await fetch(`${API_BASE_URL}/api/check-user`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+                if(!res.ok) throw new Error("Connection failed");
                 const result = await res.json();
-                if (res.ok) {
-                    isNewUser = result.isNew;
-                    const l = localStorage.getItem('respace_lang') || 'en';
-                    applyLang(l); // 刷新动态文本
-                    
-                    document.getElementById('step-email').classList.remove('active');
-                    setTimeout(() => {
-                        document.getElementById('step-email').style.display = 'none';
-                        document.getElementById('step-password').style.display = 'block';
-                        void document.getElementById('step-password').offsetWidth;
-                        document.getElementById('step-password').classList.add('active');
-                        document.getElementById('userPassword').focus();
-                    }, 300);
-                }
-            } catch (e) { alert('Offline'); }
+                isNewUser = result.isNew;
+                const l = localStorage.getItem('respace_lang') || 'en';
+                applyLang(l);
+                document.getElementById('step-email').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('step-email').style.display = 'none';
+                    document.getElementById('step-password').style.display = 'block';
+                    void document.getElementById('step-password').offsetWidth;
+                    document.getElementById('step-password').classList.add('active');
+                    document.getElementById('userPassword').focus();
+                }, 300);
+            } catch (e) { alert("Backend Unreachable. Ensure API is deployed."); }
             finally { btn.disabled = false; }
         }
 
@@ -310,23 +245,18 @@
             const password = document.getElementById('userPassword').value;
             const endpoint = isNewUser ? '/api/register' : '/api/login';
             try {
-                const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+                const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
                 if (res.ok) window.location.href = `dashboard.html?email=${email}&isNew=${isNewUser}`;
-            } catch (e) { alert('Error'); }
+                else { const r = await res.json(); alert(r.error); }
+            } catch (e) { alert('Auth Failed'); }
         }
 
         function resetFlow() { location.reload(); }
-
+        document.onclick = () => { langMenu.style.display = 'none'; };
         window.onload = () => {
             const savedLang = localStorage.getItem('respace_lang') || 'en';
             applyLang(savedLang);
-            google.accounts.id.initialize({
-                client_id: "619088067618-pq0isp6slgl186o6u52lptsadrjrjn5q.apps.googleusercontent.com",
-                callback: (r) => { /* Google Logic */ }
-            });
+            google.accounts.id.initialize({ client_id: "619088067618-pq0isp6slgl186o6u52lptsadrjrjn5q.apps.googleusercontent.com", callback: (r) => { /* Google Logic */ } });
             google.accounts.id.renderButton(document.getElementById("googleButtonContainer"), { type: "icon", theme: "filled_black", shape: "circle" });
         };
     </script>

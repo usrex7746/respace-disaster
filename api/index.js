@@ -13,7 +13,7 @@ app.use(cors({
         'https://www.respace-disaster.com',
         'http://localhost:3000', 
         'http://127.0.0.1:5500',
-        /\.vercel\.app$/ // 允许所有 vercel 预览域名
+        /\.vercel\.app$/ 
     ]
 }));
 app.use(express.json());
@@ -65,12 +65,12 @@ app.post('/api/google-login', async (req, res) => {
     } catch (err) { res.status(401).json({ error: "Google Auth Failed" }); }
 });
 
-// --- 环境适配逻辑 ---
+// --- 核心适配逻辑 ---
 
-// 1. 导出 app 供 Vercel 处理
+// 1. 必须导出 app 供 Vercel Serverless 环境调用
 module.exports = app;
 
-// 2. 只有在本地环境运行 node index.js 时才启动端口监听
+// 2. 只有在本地非生产环境下运行 node index.js 时才监听端口
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     const PORT = 3000;
     app.listen(PORT, () => {
