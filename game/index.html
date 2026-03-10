@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-<meta name="description" content="Integrating disaster risk analysis, spatial systems, and digital technologies, Respace Disaster builds a resilience-centric platform for disaster mitigation. Supported by tech products, consulting, and education, we create a closed-loop ecosystem for disaster management and educational empowerment.">
+    <meta name="description" content="Integrating disaster risk analysis, spatial systems, and digital technologies, Respace Disaster builds a resilience-centric platform for disaster mitigation. Supported by tech products, consulting, and education, we create a closed-loop ecosystem for disaster management and educational empowerment.">
 
-<meta http-equiv="content-language" content="en, zh, es">
+    <meta http-equiv="content-language" content="en, zh, es">
     <title>Games | Respace Disaster</title>
     <style>
         :root {
@@ -15,9 +17,14 @@
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
             --beer-amber: #D4A63C;
+            
+            /* NEW 飘带颜色 */
+            --live-status-green: #2a9d8f;
+            --ribbon-bg: rgba(0, 183, 255, 0.1);
+            --ribbon-border: rgba(0, 183, 255, 0.4);
+            --ribbon-text: #00e1ff;
         }
 
-        /* 基础锁定 */
         * { box-sizing: border-box; }
         body {
             margin: 0; background-color: var(--bg-color); color: var(--text-offwhite);
@@ -64,33 +71,59 @@
         .lang-menu span { font-size: 0.7rem; letter-spacing: 0.15rem; opacity: 0.4; transition: 0.3s; cursor: pointer; }
 
         /* 内容区标准 */
-        .page-header { text-align: center; margin-bottom: 4rem; z-index: 10; animation: contentFade 3s ease-out; }
+        .page-header { text-align: center; margin-bottom: 3rem; margin-top: 5rem; z-index: 10; animation: contentFade 3s ease-out; }
         h1 { font-size: 2.2rem; font-weight: 100; letter-spacing: 1.2rem; color: #ffffff; text-transform: uppercase; margin: 0; text-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
 
+        /* 6格矩阵布局 */
         .grid-container {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
-            max-width: 1100px; width: 90%; z-index: 10; animation: contentFade 4s ease-out;
+            max-width: 1200px; width: 90%; z-index: 10; animation: contentFade 4s ease-out;
+            max-height: 70vh; overflow-y: auto; padding-bottom: 2rem;
+            scrollbar-width: none; 
         }
+        .grid-container::-webkit-scrollbar { display: none; } 
+        
         @keyframes contentFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .glass-card { 
             background: var(--glass-bg); backdrop-filter: blur(25px); cursor: pointer;
-            border: 1px solid var(--glass-border); padding: 3rem 2rem; text-align: center; 
+            border: 1px solid var(--glass-border); padding: 2.5rem 2rem; text-align: center; 
             border-radius: 4px; transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1), border 0.6s;
-            position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-height: 280px;
+            position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-height: 250px;
         }
         .glass-card:hover { transform: translateY(-10px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .glass-card h3 { font-size: 0.85rem; letter-spacing: 0.3rem; margin-bottom: 1.5rem; font-weight: 300; color: #ffffff; }
-        .glass-card p { font-size: 0.8rem; line-height: 2; font-weight: 200; color: var(--text-dim); margin: 0; }
+        .glass-card h3 { font-size: 0.85rem; letter-spacing: 0.3rem; margin-bottom: 1.5rem; font-weight: 300; color: #ffffff; line-height: 1.4; }
+        .glass-card p { font-size: 0.8rem; line-height: 1.8; font-weight: 200; color: var(--text-dim); margin: 0; }
 
         /* 状态标签 */
-        .status-tag { font-size: 0.65rem; letter-spacing: 0.2rem; margin-top: 2rem; text-transform: uppercase; color: var(--beer-amber); font-weight: 300; }
+        .status-tag { font-size: 0.65rem; letter-spacing: 0.2rem; margin-top: 1.5rem; text-transform: uppercase; color: var(--beer-amber); font-weight: 300; }
 
-        /* 酒桶剪影 (卡片 1) */
+        /* NEW 飘带 CSS 样式 */
+        .new-ribbon {
+            position: absolute;
+            top: -5px; 
+            left: -40px;
+            transform: rotate(-45deg);
+            width: 120px;
+            text-align: center;
+            background: var(--ribbon-bg);
+            border: 1px solid var(--ribbon-border);
+            backdrop-filter: blur(5px); 
+            color: var(--ribbon-text);
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.15rem;
+            font-weight: 500;
+            padding: 8px 0;
+            z-index: 10;
+            text-shadow: 0 0 10px rgba(0, 225, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 183, 255, 0.1);
+        }
+
+        /* 图标/装饰 */
         .barrel-silhouette { position: absolute; bottom: -15px; right: -15px; width: 130px; height: 130px; pointer-events: none; z-index: 0; opacity: 0.3; }
         .barrel-path { fill: none; stroke: var(--beer-amber); stroke-width: 2; stroke-linecap: round; }
 
-        /* 色彩大师彩虹圈 (卡片 2) - 降低不透明度以符合整体清冷风格 */
         .rainbow-ring {
             position: absolute; bottom: -30px; right: -30px; width: 140px; height: 140px;
             border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.15;
@@ -105,23 +138,43 @@
         }
         .glass-card:hover .rainbow-ring { opacity: 0.35; transform: scale(1.05); }
 
+        /* 逻辑大师 - 手写公式装饰移动到右下角 */
+        .math-formula {
+            position: absolute; 
+            bottom: -10px; 
+            right: 10px; 
+            width: 120px; 
+            height: 80px; 
+            pointer-events: none; 
+            z-index: 0; 
+            opacity: 0.15;
+            transition: opacity 0.6s;
+        }
+        .glass-card:hover .math-formula { opacity: 0.3; }
+
         /* --- 移动端修复 --- */
         @media (max-width: 768px) {
             body { height: auto; overflow-y: auto; overflow-x: hidden; }
             .top-nav {
                 position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important;
                 width: 100% !important; background-color: #000000 !important;
-                padding: 1.5rem 4rem 3rem 0 !important; flex-direction: column !important; align-items: flex-end !important;
+                padding: 1.5rem 4rem 2rem 0 !important; flex-direction: column !important; align-items: flex-end !important;
                 gap: 0.8rem !important; z-index: 2000 !important;
             }
             .nav-links { flex-direction: column !important; align-items: flex-end !important; gap: 0.8rem !important; }
             .nav-links a { font-size: 0.75rem !important; letter-spacing: 0.1rem !important; }
             .header-left { top: 1.5rem !important; left: 2.5rem !important; z-index: 2001 !important; }
             .logo-svg { width: 28px !important; height: 28px !important; }
-            .page-header { margin-top: 22rem !important; margin-bottom: 3rem !important; position: relative; z-index: 10; }
+            .page-header { margin-top: 15rem !important; margin-bottom: 2rem !important; position: relative; z-index: 10; }
             h1 { font-size: 1.3rem !important; letter-spacing: 0.5rem !important; }
-            .grid-container { display: flex !important; flex-direction: column !important; align-items: center !important; width: 100% !important; padding: 0 1.5rem 8rem 1.5rem !important; gap: 2rem !important; }
-            .glass-card { width: 100% !important; min-height: auto !important; padding: 2.5rem 1.5rem !important; }
+            .grid-container { display: flex !important; flex-direction: column !important; align-items: center !important; width: 100% !important; padding: 0 1.5rem 5rem 1.5rem !important; gap: 1.5rem !important; max-height: none !important; overflow-y: visible !important;}
+            .glass-card { width: 100% !important; min-height: auto !important; padding: 2rem 1.5rem !important; }
+            
+            .new-ribbon {
+                width: 100px !important;
+                font-size: 0.6rem !important;
+                left: -35px !important;
+            }
         }
     </style>
 </head>
@@ -162,31 +215,62 @@
 
     <div class="grid-container">
         <div class="glass-card" onclick="location.href='beer-game/index.html'">
+            <div class="new-ribbon">NEW</div>
             <div style="z-index: 1;">
                 <h3 id="c1-t">THE BEER GAME</h3>
                 <p id="c1-d">Simulate the Bullwhip Effect in disaster supply chains through multi-echelon inventory coordination.</p>
             </div>
-            <div class="status-tag" id="c1-s">Online / Interactive</div>
+            <div class="status-tag" id="c1-s" style="color: var(--live-status-green);">Online / Interactive</div>
             <svg class="barrel-silhouette" viewBox="0 0 100 100">
                 <path class="barrel-path" d="M10 25 Q50 15 90 25" /><path class="barrel-path" d="M10 25 Q5 55 10 85" /><path class="barrel-path" d="M12 45 Q50 35 88 45" opacity="0.6"/><path class="barrel-path" d="M14 65 Q50 55 86 65" opacity="0.6"/><path class="barrel-path" d="M30 20 Q25 55 30 80" opacity="0.3"/>
             </svg>
         </div>
 
         <div class="glass-card" onclick="location.href='colorist/index.html'">
+            <div class="new-ribbon">NEW</div>
             <div style="z-index: 1;">
                 <h3 id="c2-t">COLORIST MASTER</h3>
                 <p id="c2-d">A Poka-Yoke interactive challenge to overcome visual interference and build mistake-proofing systems.</p>
             </div>
-            <div class="status-tag" id="c2-s">Online / Interactive</div>
+            <div class="status-tag" id="c2-s" style="color: var(--live-status-green);">Online / Interactive</div>
             <div class="rainbow-ring"></div>
+        </div>
+
+        <div class="glass-card" onclick="location.href='LeanLogicMaster/index.html'">
+            <div class="new-ribbon">NEW</div>
+            <div style="z-index: 1;">
+                <h3 id="c3-t">LEAN LOGIC MASTER</h3>
+                <p id="c3-d">Connect micro events to macro disasters using strict 5-Why causal deductions powered by AI.</p>
+            </div>
+            <div class="status-tag" id="c3-s" style="color: var(--live-status-green);">Online / AI Powered</div>
+            <svg class="math-formula" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                <text x="10" y="40" fill="#ffffff" font-family="'Comic Sans MS', cursive, sans-serif" font-size="24" font-style="italic">E=mc²</text>
+                <text x="70" y="20" fill="#ffffff" font-family="'Comic Sans MS', cursive, sans-serif" font-size="16" font-style="italic">∫</text>
+            </svg>
         </div>
 
         <div class="glass-card">
             <div style="z-index: 1;">
-                <h3 id="c3-t">AFTERSHOCK STRATEGY</h3>
-                <p id="c3-d">Multi-agent strategic coordination and resource competition model during humanitarian crises.</p>
+                <h3 id="c4-t">AFTERSHOCK STRATEGY</h3>
+                <p id="c4-d">Multi-agent strategic coordination and resource competition model during humanitarian crises.</p>
             </div>
-            <div class="status-tag" id="c3-s">Coming Soon</div>
+            <div class="status-tag" id="c4-s">COMING SOON</div>
+        </div>
+
+        <div class="glass-card">
+            <div style="z-index: 1;">
+                <h3 id="c5-t">EMERGENCY DRILL</h3>
+                <p id="c5-d">Virtual tabletop exercise for urban evacuation and rapid response deployment under time constraints.</p>
+            </div>
+            <div class="status-tag" id="c5-s">COMING SOON</div>
+        </div>
+
+        <div class="glass-card">
+            <div style="z-index: 1;">
+                <h3 id="c6-t">RESOURCE SANDBOX</h3>
+                <p id="c6-d">Dynamic modeling of critical material distribution across fragmented infrastructure networks.</p>
+            </div>
+            <div class="status-tag" id="c6-s">COMING SOON</div>
         </div>
     </div>
 
@@ -196,42 +280,63 @@
                 title: "SERIOUS GAMES", 
                 c1t: "THE BEER GAME", c1d: "Simulate the Bullwhip Effect in disaster supply chains through multi-echelon inventory coordination.", c1s: "Online / Interactive", 
                 c2t: "COLORIST MASTER", c2d: "A Poka-Yoke interactive challenge to overcome visual interference and build mistake-proofing systems.", c2s: "Online / Interactive", 
-                c3t: "AFTERSHOCK STRATEGY", c3d: "Multi-agent strategic coordination and resource competition model during crises.", c3s: "Coming Soon" 
+                c3t: "LEAN LOGIC MASTER", c3d: "Connect micro events to macro disasters using strict 5-Why causal deductions powered by AI.", c3s: "Online / AI Powered", 
+                c4t: "AFTERSHOCK STRATEGY", c4d: "Multi-agent strategic coordination and resource competition model during humanitarian crises.", c4s: "COMING SOON",
+                c5t: "EMERGENCY DRILL", c5d: "Virtual tabletop exercise for urban evacuation and rapid response deployment under time constraints.", c5s: "COMING SOON",
+                c6t: "RESOURCE SANDBOX", c6d: "Dynamic modeling of critical material distribution across fragmented infrastructure networks.", c6s: "COMING SOON" 
             },
             zh: { 
                 title: "SERIOUS GAMES", 
                 c1t: "啤酒游戏", c1d: "通过多级库存协调，模拟救灾供应链中的牛鞭效应。", c1s: "在线互动", 
                 c2t: "色彩大师", c2d: "Poka-Yoke 防错互动挑战，克服视觉干扰并体验从人为判断到物理联锁的系统演进。", c2s: "在线互动", 
-                c3t: "余震策略", c3d: "人道主义危机期间的多智能体战略协调与资源竞争模型。", c3s: "敬请期待" 
+                c3t: "逻辑大师", c3d: "利用 AI 驱动的严格 5Why 逻辑推演，将微观操作与宏观系统灾难建立因果连接。", c3s: "在线 / AI 驱动",
+                c4t: "余震策略", c4d: "人道主义危机期间的多智能体战略协调与资源竞争模型。", c4s: "敬请期待",
+                c5t: "应急演练", c5d: "在时间约束下进行城市疏散与快速响应部署的虚拟桌面推演。", c5s: "敬请期待",
+                c6t: "资源沙盘", c6d: "在碎片化的基础设施网络中，动态模拟关键物资的分配与流转。", c6s: "敬请期待" 
             },
             jp: { 
                 title: "SERIOUS GAMES", 
                 c1t: "ビアゲーム", c1d: "多段階の在庫調整を通じて、災害サプライチェーンにおけるブルウィップ効果をシミュレート。", c1s: "オンライン / インタラクティブ", 
                 c2t: "カラリスト・マスター", c2d: "ポカヨケ（ポカ除け）のインタラクティブな課題。視覚的な干渉を克服し、ミス防止システムを構築します。", c2s: "オンライン / インタラクティブ", 
-                c3t: "余震戦略", c3d: "人道危機時におけるマルチエージェント戦略調整とリソース競争モデル。", c3s: "近日公開" 
+                c3t: "ロジック・マスター", c3d: "AIによる厳密な「なぜなぜ分析(5Why)」を用い、微小な事象と大規模なシステム障害を因果関係で結びつけます。", c3s: "オンライン / AI搭載",
+                c4t: "余震戦略", c4d: "人道危機時におけるマルチエージェント戦略調整とリソース競争モデル。", c4s: "近日公開",
+                c5t: "緊急避難訓練", c5d: "時間制約下での都市避難と迅速な対応展開のための仮想卓上演習。", c5s: "近日公開",
+                c6t: "リソース・サンドボックス", c6d: "分断されたインフラネットワーク全体にわたる重要な物資配分の動的モデリング。", c6s: "近日公開" 
             },
             es: { 
                 title: "SERIOUS GAMES", 
                 c1t: "EL JUEGO DE LA CERVEZA", c1d: "Simule el efecto látigo en las cadenas de suministro de desastres mediante la coordinación de inventario.", c1s: "En línea / Interactivo", 
                 c2t: "COLORIST MASTER", c2d: "Un desafío interactivo Poka-Yoke para superar la interferencia visual y construir sistemas a prueba de errores.", c2s: "En línea / Interactivo", 
-                c3t: "ESTRATEGIA AFTERSHOCK", c3d: "Modelo de coordinación estratégica y competencia de recursos durante crisis.", c3s: "Próximamente" 
+                c3t: "MAESTRO LÓGICO", c3d: "Conecta eventos micro con desastres macro utilizando deducciones causales estrictas de 5 Porqués impulsadas por IA.", c3s: "En línea / IA",
+                c4t: "ESTRATEGIA AFTERSHOCK", c4d: "Modelo de coordinación estratégica y competencia de recursos durante crisis humanitarias.", c4s: "PRÓXIMAMENTE",
+                c5t: "SIMULACRO DE EMERGENCIA", c5d: "Ejercicio de mesa virtual para evacuación urbana y despliegue de respuesta rápida bajo restricciones de tiempo.", c5s: "PRÓXIMAMENTE",
+                c6t: "SANDBOX DE RECURSOS", c6d: "Modelado dinámico de distribución de materiales críticos a través de redes de infraestructura fragmentadas.", c6s: "PRÓXIMAMENTE" 
             },
             fr: { 
                 title: "SERIOUS GAMES", 
                 c1t: "LE JEU DE LA BIÈRE", c1d: "Simulez l'effet coup de fouet dans les chaînes d'approvisionnement via la coordination des stocks.", c1s: "En ligne / Interactif", 
                 c2t: "MAÎTRE COLORISTE", c2d: "Un défi interactif Poka-Yoke pour surmonter les interférences visuelles et construire des systèmes anti-erreurs.", c2s: "En ligne / Interactif", 
-                c3t: "STRATÉGIE AFTERSHOCK", c3d: "Modèle de coordination stratégique et de compétition des ressources pendant les crises.", c3s: "Bientôt disponible" 
+                c3t: "MAÎTRE DE LA LOGIQUE", c3d: "Connectez des micro-événements aux macro-désastres à l'aide de déductions causales strictes des 5 Pourquoi alimentées par l'IA.", c3s: "En ligne / IA",
+                c4t: "STRATÉGIE AFTERSHOCK", c4d: "Modèle de coordination stratégique et de compétition des ressources pendant les crises humanitaires.", c4s: "BIENTÔT DISPONIBLE",
+                c5t: "EXERCICE D'URGENCE", c5d: "Exercice sur table virtuel pour l'évacuation urbaine et le déploiement d'une réponse rapide sous contraintes de temps.", c5s: "BIENTÔT DISPONIBLE",
+                c6t: "BAC À SABLE DE RESSOURCES", c6d: "Modélisation dynamique de la distribution de matériel critique à travers des réseaux d'infrastructures fragmentés.", c6s: "BIENTÔT DISPONIBLE" 
             }
         };
 
         function setLang(l) { localStorage.setItem('respace_lang', l); applyLang(l); document.getElementById('langMenu').style.display = 'none'; }
+        
         function applyLang(l) {
             const t = translations[l] || translations.en;
             document.getElementById('page-title').innerText = t.title;
-            document.getElementById('c1-t').innerText = t.c1t; document.getElementById('c1-d').innerText = t.c1d; document.getElementById('c1-s').innerText = t.c1s;
-            document.getElementById('c2-t').innerText = t.c2t; document.getElementById('c2-d').innerText = t.c2d; document.getElementById('c2-s').innerText = t.c2s;
-            document.getElementById('c3-t').innerText = t.c3t; document.getElementById('c3-d').innerText = t.c3d; document.getElementById('c3-s').innerText = t.c3s;
+            
+            // 简单的循环应用赋值，杜绝任何定位不到 ID 的错误
+            for(let i = 1; i <= 6; i++) {
+                document.getElementById('c' + i + '-t').innerText = t['c' + i + 't'];
+                document.getElementById('c' + i + '-d').innerText = t['c' + i + 'd'];
+                document.getElementById('c' + i + '-s').innerText = t['c' + i + 's'];
+            }
         }
+        
         function toggleLangMenu(e) { e.stopPropagation(); const m = document.getElementById('langMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
         window.onload = () => { applyLang(localStorage.getItem('respace_lang') || 'en'); };
         document.onclick = () => { document.getElementById('langMenu').style.display = 'none'; };

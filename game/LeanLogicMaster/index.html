@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="description" content="Integrating disaster risk analysis, spatial systems, and digital technologies, Respace Disaster builds a resilience-centric platform for disaster mitigation. Supported by tech products, consulting, and education, we create a closed-loop ecosystem for disaster management and educational empowerment.">
+    <meta http-equiv="content-language" content="en, zh, es">
+    
+    <title>Lean Logic Master | 逻辑大师</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-chalkboard: #1a3622;
+            --card-bg: rgba(30, 33, 38, 0.95);
+            --input-bg: rgba(0, 0, 0, 0.6);
+            --text-main: #e0e0e0;
+            --text-accent: #d4b886;
+            --border-color: #3b4048;
+            --border-focus: #d4b886;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-chalkboard);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='600' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(255,255,255,0.12)' font-family='%22Comic Sans MS%22, cursive, sans-serif' font-size='22' font-style='italic'%3E%3Ctext x='40' y='60'%3E%E2%88%AB f(x)dx = F(x) + C%3C/text%3E%3Ctext x='380' y='90'%3EE = mc%C2%B2%3C/text%3E%3Ctext x='50' y='180'%3E%E2%88%87 %C3%97 B = %CE%BC%E2%82%80(J + %CE%B5%E2%82%80 %E2%88%82E/%E2%88%82t)%3C/text%3E%3Ctext x='350' y='220'%3E%CF%83%C2%B2 = %E2%88%91(x - %CE%BC)%C2%B2 / N%3C/text%3E%3Ctext x='80' y='300'%3Ee%5E(i%CF%80) + 1 = 0%3C/text%3E%3Ctext x='420' y='340'%3EF = dp/dt%3C/text%3E%3Ctext x='180' y='370'%3E%CE%94S %E2%89%A5 0%3C/text%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #1e2126 inset !important;
+            -webkit-text-fill-color: var(--text-main) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); }
+        
+        .logo { font-size: 18px; font-weight: 600; color: var(--text-accent); display: flex; align-items: center; gap: 10px; text-decoration: none; transition: opacity 0.3s; }
+        .logo:hover { opacity: 0.8; }
+        
+        .nav-icons { display: flex; gap: 15px; align-items: center; }
+        .icon-btn { font-size: 24px; color: #aaa; cursor: pointer; transition: color 0.3s; user-select: none; }
+        .icon-btn:hover { color: var(--text-accent); }
+        
+        .lang-container { position: relative; }
+        .lang-menu { display: none; position: absolute; right: 0; top: 35px; background: #1e2126; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.8); z-index: 100; }
+        .lang-menu.show { display: block; }
+        .lang-menu div { padding: 12px 20px; font-size: 14px; color: var(--text-main); white-space: nowrap; cursor: pointer; }
+        .lang-menu div:hover { background: rgba(212, 184, 134, 0.15); color: var(--text-accent); }
+
+        .main-card { background-color: var(--card-bg); max-width: 800px; margin: 40px auto; padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(5px); }
+        .header-title { text-align: center; font-size: 28px; font-weight: 600; color: var(--text-accent); margin-bottom: 40px; }
+        
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-group { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .input-wrapper { flex: 1; display: flex; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 15px; align-items: center; transition: border-color 0.3s; }
+        .input-wrapper:focus-within { border-color: var(--border-focus); }
+        .input-prefix { padding: 15px 10px 15px 0; color: #999; font-weight: 500; white-space: nowrap; min-width: 80px; }
+        
+        input[type="text"] { flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 15px; outline: none; padding: 15px 0; width: 100%; font-family: 'Inter', sans-serif; }
+        
+        .dice-btn { font-size: 24px; cursor: pointer; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; user-select: none; }
+        .dice-btn:hover { border-color: var(--text-accent); transform: translateY(-2px); background: rgba(212, 184, 134, 0.1); }
+
+        .btn-group { margin-top: 40px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 12px 30px; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.3s; }
+        .btn:hover { border-color: var(--border-focus); color: var(--border-focus); background: rgba(212, 184, 134, 0.08); }
+        .btn-action { background: var(--text-accent); color: #000; border: none; font-weight: 600; }
+        .btn-action:hover { background: #e5c997; }
+
+        .back-nav { color: #888; cursor: pointer; margin-bottom: 20px; display: inline-block; font-size: 14px; transition: color 0.3s; }
+        .back-nav:hover { color: var(--text-accent); }
+        .target-box { background: rgba(0,0,0,0.4); border: 1px dashed var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 30px; text-align: center; color: #aaa; }
+        .target-box span { color: var(--text-accent); font-weight: 600; }
+        .cascade-item { margin-bottom: 25px; }
+        .q-row { font-size: 15px; color: #bbb; margin-bottom: 10px; padding-left: 5px; line-height: 1.5; }
+        .q-highlight { color: #fff; font-weight: 600; text-decoration: underline; text-decoration-color: var(--border-color); text-underline-offset: 4px; padding: 0 4px; }
+        .q-final { color: #ff6b6b; font-weight: 600; } 
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: #1e2126; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; border: 1px solid var(--border-focus); position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 24px; color: #888; }
+        .modal-close:hover { color: #fff; }
+        
+        .ai-result-box { margin-top: 15px; line-height: 1.6; }
+        .ai-step { background: rgba(0,0,0,0.5); padding: 16px; border-radius: 8px; margin-bottom: 16px; border-left: 3px solid var(--border-focus); }
+        .score-circle { display: inline-block; width: 70px; height: 70px; line-height: 70px; text-align: center; border-radius: 50%; background: var(--border-focus); color: #000; font-size: 28px; font-weight: bold; margin-bottom: 15px; }
+        
+        .info-text { color: #ccc; font-size: 15px; line-height: 1.8; margin-bottom: 20px; }
+        .info-link { color: var(--text-accent); text-decoration: none; font-weight: 500;}
+        .info-link:hover { text-decoration: underline; }
+        
+        .cursor-blink { display: inline-block; width: 8px; height: 18px; background-color: var(--text-accent); margin-left: 5px; vertical-align: middle; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="https://www.respace-disaster.com/game/index.html" class="logo">
+            <img src="/favicon.svg" alt="logo" style="width: 24px; height: 24px; filter: brightness(0) invert(1);">
+            <span id="header-text">逻辑大师</span>
+        </a>
+        <div class="nav-icons">
+            <div class="icon-btn" onclick="openInfoModal()">ℹ️</div>
+            <div class="lang-container">
+                <div class="icon-btn globe-icon" onclick="toggleLangMenu(event)">🌐</div>
+                <div class="lang-menu" id="langMenu">
+                    <div onclick="switchLang('zh')">中文 (ZH)</div>
+                    <div onclick="switchLang('en')">English (EN)</div>
+                    <div onclick="switchLang('es')">Español (ES)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-card">
+        <div class="header-title" id="main-title">逻辑大师</div>
+
+        <div id="view-setup" class="view-section active">
+            <div class="input-group">
+                <div class="input-wrapper" style="border-color: rgba(255,255,255,0.2);">
+                    <div class="input-prefix" id="label-Player">👤 玩家姓名:</div>
+                    <input type="text" id="playerName" placeholder="输入姓名..." oninput="checkEasterEgg()">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <div class="input-prefix" id="label-A">现状 A:</div>
+                    <input type="text" id="inputA" placeholder="...">
+                </div>
+                <div class="dice-btn" onclick="rollDice('A')" title="随机生成">🎲</div>
+            </div>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <div class="input-prefix" id="label-B">结论 B:</div>
+                    <input type="text" id="inputB" placeholder="...">
+                </div>
+                <div class="dice-btn" onclick="rollDice('B')" title="随机生成">🎲</div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-action" id="btn-i-answer" onclick="goToAnswerView()">我来回答</button>
+                <button class="btn" id="btn-ask-ai" onclick="callAskAI()">问问 AI (大师方案)</button>
+            </div>
+        </div>
+
+        <div id="view-answer" class="view-section">
+            <div class="back-nav" id="btn-back" onclick="goToSetupView()">← 返回上一页</div>
+            <div class="target-box"><span id="label-target">目标结论：</span> <span id="target-b-text">...</span></div>
+            
+            <div id="cascade-container"></div>
+            
+            <div class="btn-group">
+                <button class="btn btn-action" id="btn-grade" onclick="if(validateAnswers(userAnswers)) callGradeMe(userAnswers)">给我评分</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ai-modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('ai-modal')">×</div>
+            <h3 id="modal-title" style="color: var(--text-accent); margin-top: 0; text-align: center;">AI 分析</h3>
+            <div id="ai-loading-text" style="padding: 20px; font-family: monospace; color: var(--text-accent); line-height: 2; font-size: 14px; display: none;"></div>
+            <div class="ai-result-box" id="ai-result"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('info-modal')">×</div>
+            <h3 id="info-title" style="color: var(--text-accent); margin-top: 0; margin-bottom: 20px;">关于 5Why 工具</h3>
+            <div class="info-text" id="info-desc">
+                5Why（五个为什么）是精益生产中用于探究问题根本原因的经典工具。通过不断追问“为什么”，剥离表面症状，直击系统与流程漏洞，防止问题重复发生。
+            </div>
+            <div class="info-text" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <strong id="info-powered">框架支持：</strong><br>
+            </div>
+            <div class="info-text">
+                <strong id="info-contact">联系我：</strong> <a href="mailto:usrex7746@gmail.com" class="info-link">usrex7746@gmail.com</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = "AIzaSyDpsRadAXUL6-KHYN113g9ZZxsDEI0fI2c"; 
+
+        const i18n = {
+            zh: { 
+                header: "逻辑大师", labelPlayer: "👤 玩家姓名:", labelA: "微观现状 A:", labelB: "宏观结论 B:", 
+                btnIAnswer: "我来回答", btnAskAI: "问问 AI", btnBack: "← 返回并重置", 
+                labelTarget: "目标结论：", 
+                whyPrefix: "为什么", whySuffix: "会发生？", 
+                whyFinalPrefix: "为什么", whyFinalSuffix: "最终导致了", 
+                becausePrefix: "因为...", btnGrade: "给我评分", btnExport: "📥 导出 PDF 报告",
+                alertEmptyName: "请先填写玩家姓名！", alertEmptyAB: "请先填写或摇骰子生成 A 和 B！",
+                alertEmptyAns: "请先填写完整 5 个原因步骤，逻辑链不能断开！",
+                aiTitleAsk: "问问 AI", aiTitleGrade: "AI 评分",
+                stepPrefix: "步骤", critiqueTitle: "大师点评:", aiSelfGrade: "评估 AI 答案",
+                infoTitle: "关于 5Why 与系统",
+                infoDesc: "5Why（五个为什么）是精益生产中用于探究问题根本原因的经典工具。通过不断追问“为什么”，剥离表面症状，直击系统与流程漏洞，从而防止问题重复发生。",
+                infoPowered: "框架支持：Google Gemini<br><br>特别提示：我们通过Google Gemini API获取AI支持，AI可能犯错，结果仅供娱乐。", 
+                infoContact: "联系我："
+            },
+            en: { 
+                header: "Lean Logic Master", labelPlayer: "👤 Player Name:", labelA: "Micro Event A:", labelB: "Macro Event B:", 
+                btnIAnswer: "I'll Answer", btnAskAI: "Ask AI", btnBack: "← Back & Reset", 
+                labelTarget: "Target Result: ", 
+                whyPrefix: "Why did", whySuffix: "happen?", 
+                whyFinalPrefix: "How did", whyFinalSuffix: "eventually lead to",
+                becausePrefix: "Because...", btnGrade: "Grade Me", btnExport: "📥 Export PDF Report",
+                alertEmptyName: "Please enter your Player Name first!", alertEmptyAB: "Please input or generate A and B!",
+                alertEmptyAns: "Please complete all 5 steps. The logic chain cannot be broken!",
+                aiTitleAsk: "Ask AI", aiTitleGrade: "AI Evaluation",
+                stepPrefix: "Step", critiqueTitle: "Master's Critique:", aiSelfGrade: "Evaluate AI Answer",
+                infoTitle: "About the 5Whys",
+                infoDesc: "The 5Whys is a classic Lean manufacturing tool used to explore the root cause of a problem. By repeatedly asking 'Why', we strip away surface symptoms and target system vulnerabilities.",
+                infoPowered: "Powered by: Google Gemini<br><br>Special Note: We use Google Gemini API for AI support. AI can make mistakes, results are for entertainment only.", 
+                infoContact: "Contact: "
+            },
+            es: { 
+                header: "Maestro de Lógica Lean", labelPlayer: "👤 Nombre del Jugador:", labelA: "Evento Micro A:", labelB: "Evento Macro B:", 
+                btnIAnswer: "Yo respondo", btnAskAI: "Preguntar a IA", btnBack: "← Volver y Reiniciar", 
+                labelTarget: "Resultado Final: ", 
+                whyPrefix: "¿Por qué ocurrió", whySuffix: "?", 
+                whyFinalPrefix: "¿Cómo es que", whyFinalSuffix: "finalmente causó",
+                becausePrefix: "Porque...", btnGrade: "Califícame", btnExport: "📥 Exportar Reporte PDF",
+                alertEmptyName: "¡Ingresa tu nombre primero!", alertEmptyAB: "¡Por favor, ingresa o genera A y B!",
+                alertEmptyAns: "¡Completa los 5 pasos primero. La cadena lógica no puede romperse!",
+                aiTitleAsk: "Preguntar a IA", aiTitleGrade: "Evaluación de IA",
+                stepPrefix: "Paso", critiqueTitle: "Crítica del Maestro:", aiSelfGrade: "Evaluar Respuesta de IA",
+                infoTitle: "Acerca de los 5 Porqués",
+                infoDesc: "Los 5 Porqués es una herramienta clásica de manufactura esbelta. Al preguntar iterativamente '¿Por qué?', eliminamos los síntomas superficiales y atacamos las fallas del sistema.",
+                infoPowered: "Impulsado por: Google Gemini<br><br>Nota Especial: Usamos Google Gemini API. La IA puede cometer errores, los resultados son solo para entretenimiento.", 
+                infoContact: "Contacto: "
+            }
+        };
+
+        const loadingMsgs = {
+            zh: ["> 我们正在安全连接 Gemini 数据库...", "> 身份验证通过，加载精益逻辑模型...", "> Gemini 正在深度思考中...", "> 正在匹配因果关系链条...", "> 我们获取到了相关资源，正在生成界面..."],
+            en: ["> Securely connecting to Gemini database...", "> Auth passed, loading Lean model...", "> Gemini is thinking deeply...", "> Deducing 5Why causality chain...", "> Resources acquired, generating UI..."],
+            es: ["> Conectando de forma segura a Gemini...", "> Autenticación exitosa, cargando modelo...", "> Gemini está pensando profundamente...", "> Deduciendo cadena de 5 Porqués...", "> Recursos obtenidos, generando interfaz..."]
+        };
+
+        let currentLang = 'zh';
+
+        function toggleLangMenu(e) { 
+            e.stopPropagation();
+            document.getElementById('langMenu').classList.toggle('show'); 
+        }
+        window.onclick = function(event) { 
+            if (!event.target.matches('.globe-icon')) document.getElementById('langMenu').classList.remove('show'); 
+        }
+
+        function switchLang(lang) {
+            currentLang = lang;
+            const t = i18n[lang];
+            
+            document.getElementById('header-text').innerText = t.header;
+            document.getElementById('main-title').innerText = t.header;
+            
+            document.getElementById('label-Player').innerText = t.labelPlayer;
+            document.getElementById('playerName').placeholder = lang === 'zh' ? "输入姓名..." : lang === 'en' ? "Enter name..." : "Ingrese nombre...";
+            document.getElementById('label-A').innerText = t.labelA;
+            document.getElementById('label-B').innerText = t.labelB;
+            document.getElementById('btn-i-answer').innerText = t.btnIAnswer;
+            document.getElementById('btn-ask-ai').innerText = t.btnAskAI;
+            document.getElementById('btn-back').innerText = t.btnBack;
+            document.getElementById('label-target').innerText = t.labelTarget;
+            document.getElementById('btn-grade').innerText = t.btnGrade;
+            
+            document.getElementById('info-title').innerText = t.infoTitle;
+            document.getElementById('info-desc').innerText = t.infoDesc;
+            document.getElementById('info-powered').innerHTML = t.infoPowered;
+            document.getElementById('info-contact').innerText = t.infoContact;
+            
+            ['A', 'B'].forEach(type => {
+                const input = document.getElementById('input' + type);
+                if (input.dataset.item) { input.value = JSON.parse(input.dataset.item)[lang]; }
+            });
+
+            if(document.getElementById('view-answer').classList.contains('active')) renderCascadeUI();
+        }
+
+        const masterLibrary = {
+            A: [
+                {zh:"叉车点检表漏签了字", en:"Forklift checklist left unsigned", es:"Checklist de montacargas sin firma"},
+                {zh:"打印机卡纸了5分钟", en:"Printer jammed for 5 minutes", es:"Impresora atascada por 5 minutos"},
+                {zh:"地上掉了一颗M4螺丝", en:"An M4 screw dropped on floor", es:"Un tornillo M4 cayó al suelo"},
+                {zh:"操作工喝了一口水", en:"Operator took a sip of water", es:"El operador tomó un sorbo de agua"},
+                {zh:"车间温度升高了2度", en:"Workshop temp increased 2°", es:"Temp. del taller subió 2°"},
+                {zh:"一个空纸箱放歪了", en:"An empty carton placed crooked", es:"Caja de cartón quedó torcida"},
+                {zh:"洗手液瓶盖没拧紧", en:"Hand sanitizer cap wasn't tight", es:"Tapa de gel antibacterial suelta"},
+                {zh:"仓库门晚关了10秒", en:"Warehouse door closed 10s late", es:"Puerta almacén cerró 10s tarde"},
+                {zh:"咖啡机少放了过滤纸", en:"Coffee machine missed filter", es:"Faltó filtro en cafetera"},
+                {zh:"员工手套破了一个洞", en:"A hole in employee's glove", es:"Un agujero en guante"},
+                {zh:"托盘上多了一根胶带", en:"Extra piece of tape on pallet", es:"Trozo extra de cinta en palet"},
+                {zh:"标签纸颜色稍微偏暗", en:"Label paper color is dark", es:"Color de etiqueta oscuro"}
+            ],
+            B: [
+                {zh:"导致 SpaceX 火箭发射推迟", en:"Caused SpaceX launch delay", es:"Retrasó lanzamiento SpaceX"},
+                {zh:"导致 Apple 新款 iPhone 难产", en:"Caused Apple iPhone production halt", es:"Frenó producción de iPhone"},
+                {zh:"导致 Tesla 上海工厂停线", en:"Caused Tesla Giga shutdown", es:"Causó cierre Tesla"},
+                {zh:"导致 Amazon AWS 服务器宕机", en:"Caused Amazon AWS massive outage", es:"Causó caída de Amazon AWS"},
+                {zh:"导致 Boeing 全球737禁飞", en:"Caused Boeing 737 grounding", es:"Causó restricción Boeing 737"},
+                {zh:"导致 BYD (比亚迪) 召回十万辆新车", en:"Caused BYD recall 100k cars", es:"Causó retiro de 100k autos BYD"},
+                {zh:"导致 Microsoft 利润暴跌20%", en:"Caused Microsoft profit drop 20%", es:"Causó caída 20% ganancias Microsoft"},
+                {zh:"导致 Pfizer (辉瑞) 销毁整批疫苗", en:"Caused Pfizer scrap vaccines", es:"Causó Pfizer desechara vacunas"},
+                {zh:"导致 Maersk (马士基) 滞留苏伊士", en:"Caused Maersk ship stuck in Suez", es:"Causó barco Maersk varado"},
+                {zh:"导致 FedEx 错过圣诞核心物流", en:"Caused FedEx miss Christmas", es:"Causó FedEx perdiera Navidad"},
+                {zh:"导致 Sony PS6 主机发售延后", en:"Caused Sony PS6 launch delay", es:"Retrasó lanzamiento Sony PS6"},
+                {zh:"导致 Google 核心算法泄露", en:"Caused Google core algorithm leak", es:"Causó filtración Google"}
+            ]
+        };
+
+        let pool = { A: [], B: [] };
+        function shuffleArray(array) { let cur = array.length, rand; while (cur !== 0) { rand = Math.floor(Math.random() * cur); cur--; [array[cur], array[rand]] = [array[rand], array[cur]]; } return array; }
+        function rollDice(type) {
+            if (pool[type].length === 0) pool[type] = shuffleArray([...masterLibrary[type]]);
+            const item = pool[type].pop();
+            document.getElementById('input' + type).value = item[currentLang];
+            document.getElementById('input' + type).dataset.item = JSON.stringify(item);
+        }
+
+        let userAnswers = ["", "", "", "", ""];
+        let aiAnswers = []; 
+        let lastEvaluationData = null; 
+
+        // 3. LLM 浪漫彩蛋逻辑
+        let hasFiredLLM = false;
+        function checkEasterEgg() {
+            const val = document.getElementById('playerName').value.trim().toUpperCase();
+            if (val === 'LLM' && !hasFiredLLM) {
+                hasFiredLLM = true;
+                let times = 0;
+                // 每隔 800ms 绽放一次，共 3 次
+                const fire = setInterval(() => {
+                    confetti({
+                        particleCount: 100,
+                        spread: 80,
+                        origin: { y: 0.6 },
+                        colors: ['#d4b886', '#ff6b6b', '#1dd1a1', '#ffffff'],
+                        zIndex: 9999
+                    });
+                    times++;
+                    if (times >= 3) clearInterval(fire);
+                }, 800);
+            } else if (val !== 'LLM') {
+                hasFiredLLM = false; // 删除了 LLM 重置状态，下次打字还能触发
+            }
+        }
+
+        function validatePlayerName() {
+            const pName = document.getElementById('playerName').value.trim();
+            if(!pName) { alert(i18n[currentLang].alertEmptyName); return false; }
+            return true;
+        }
+
+        function validateAnswers(answersArray) {
+            if (answersArray.some(a => !a || a.trim() === "")) { alert(i18n[currentLang].alertEmptyAns); return false; }
+            return true;
+        }
+
+        function goToAnswerView() {
+            if(!validatePlayerName()) return;
+            const valA = document.getElementById('inputA').value.trim(); 
+            const valB = document.getElementById('inputB').value.trim();
+            if(!valA || !valB) return alert(i18n[currentLang].alertEmptyAB);
+            document.getElementById('target-b-text').innerText = valB;
+            document.getElementById('view-setup').classList.remove('active'); document.getElementById('view-answer').classList.add('active');
+            renderCascadeUI();
+        }
+        
+        function goToSetupView() { 
+            document.getElementById('playerName').value = "";
+            document.getElementById('inputA').value = "";
+            document.getElementById('inputB').value = "";
+            userAnswers = ["", "", "", "", ""];
+            aiAnswers = [];
+            lastEvaluationData = null;
+            hasFiredLLM = false;
+
+            document.getElementById('view-answer').classList.remove('active'); 
+            document.getElementById('view-setup').classList.add('active'); 
+        }
+        
+        function renderCascadeUI() {
+            const container = document.getElementById('cascade-container'); container.innerHTML = '';
+            const t = i18n[currentLang]; 
+            const targetB = document.getElementById('target-b-text').innerText;
+            let currentQ = document.getElementById('inputA').value;
+            
+            for(let i=0; i<5; i++) {
+                if(i > 0 && userAnswers[i-1] === "") currentQ = "___"; else if (i > 0) currentQ = userAnswers[i-1];
+                let qTextHTML = i < 4 
+                    ? `${i+1}. ${t.whyPrefix} <span id="q-text-${i}" class="q-highlight">${currentQ}</span> ${t.whySuffix}` 
+                    : `5. 🎯 ${t.whyFinalPrefix} <span id="q-text-${i}" class="q-highlight">${currentQ}</span> ${t.whyFinalSuffix} <span class="q-final">${targetB}</span> ？`;
+
+                const html = `
+                    <div class="cascade-item">
+                        <div class="q-row">${qTextHTML}</div>
+                        <div class="input-wrapper">
+                            <div class="input-prefix">${t.becausePrefix}</div>
+                            <input type="text" id="a-input-${i}" value="${userAnswers[i]}" oninput="updateNextQ(${i})">
+                        </div>
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            }
+        }
+        
+        function updateNextQ(idx) {
+            const val = document.getElementById(`a-input-${idx}`).value; userAnswers[idx] = val;
+            if (idx < 4) { const nq = document.getElementById(`q-text-${idx + 1}`); if(nq) nq.innerText = val === "" ? "___" : val; }
+        }
+
+        function openInfoModal() { document.getElementById('info-modal').classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+        let typewriterTimer;
+        function startLoadingUI() {
+            const resultBox = document.getElementById('ai-result');
+            const loadingBox = document.getElementById('ai-loading-text');
+            resultBox.style.display = 'none';
+            loadingBox.style.display = 'block';
+            loadingBox.innerHTML = '';
+            
+            const msgs = loadingMsgs[currentLang];
+            let line = 0, charIdx = 0;
+            let currentLineDiv = document.createElement('div');
+            loadingBox.appendChild(currentLineDiv);
+
+            // 2. 将打字速度降频：时间间隔延长一倍 (120ms)
+            typewriterTimer = setInterval(() => {
+                if (line >= msgs.length) { clearInterval(typewriterTimer); return; }
+                if (charIdx < msgs[line].length) {
+                    currentLineDiv.innerHTML += msgs[line].charAt(charIdx);
+                    charIdx++;
+                } else {
+                    line++; charIdx = 0;
+                    if (line < msgs.length) {
+                        currentLineDiv = document.createElement('div');
+                        loadingBox.appendChild(currentLineDiv);
+                    }
+                }
+                const cursors = loadingBox.querySelectorAll('.cursor-blink');
+                cursors.forEach(c => c.remove());
+                currentLineDiv.innerHTML += '<span class="cursor-blink"></span>';
+            }, 120); 
+        }
+
+        function stopLoadingUI() {
+            clearInterval(typewriterTimer);
+            document.getElementById('ai-loading-text').style.display = 'none';
+            document.getElementById('ai-result').style.display = 'block';
+        }
+
+        async function fetchGemini(p) {
+            document.getElementById('ai-modal').classList.add('active');
+            startLoadingUI();
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url, { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ contents: [{ parts: [{ text: p }] }], generationConfig: { response_mime_type: "application/json" } }) 
+                });
+                if (response.status === 429) { alert("API 免费额度已耗尽。"); closeModal('ai-modal'); stopLoadingUI(); return null; }
+                if (!response.ok) { alert(`Network Error (${response.status})`); closeModal('ai-modal'); stopLoadingUI(); return null; }
+                
+                const data = await response.json();
+                stopLoadingUI();
+
+                if (!data.candidates || data.candidates.length === 0) { alert("API returned empty data."); closeModal('ai-modal'); return null; }
+
+                let rawText = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
+                return JSON.parse(rawText);
+            } catch (error) { alert(`Error: ${error.message}`); closeModal('ai-modal'); stopLoadingUI(); return null; }
+        }
+
+        async function callAskAI() {
+            if(!validatePlayerName()) return;
+            const t = i18n[currentLang];
+            const valA = document.getElementById('inputA').value.trim(); 
+            const valB = document.getElementById('inputB').value.trim();
+            if(!valA || !valB) return alert(t.alertEmptyAB);
+            document.getElementById('modal-title').innerText = t.aiTitleAsk;
+            
+            const prompt = `Lean Operations Expert. Language: ${currentLang}. 
+            Target: Connect micro event "${valA}" to macro disaster "${valB}" in exact 5 causal steps. 
+            Rule 1: Focus on system/management (Poka-yoke, SOP). 
+            Rule 2: EXTREMELY CONCISE. Maximum 15 words per step. DO NOT explain, just state the direct short cause.
+            Output JSON format ONLY: { "whys": ["short cause 1", "short cause 2", "short cause 3", "short cause 4", "short cause 5"] }`;
+            
+            const result = await fetchGemini(prompt);
+            
+            if(result && result.whys) { 
+                aiAnswers = result.whys; 
+                let html = ""; let currentQ = valA;
+                
+                for(let i=0; i<5; i++) {
+                    let qTextHTML = i < 4 ? `${i+1}. ${t.whyPrefix} <span class="q-highlight">${currentQ}</span> ${t.whySuffix}` : `5. 🎯 ${t.whyFinalPrefix} <span class="q-highlight">${currentQ}</span> ${t.whyFinalSuffix} <span class="q-final">${valB}</span> ？`;
+                    html += `<div class="ai-step"><div class="q-row" style="color:#aaa;margin-bottom:8px;">${qTextHTML}</div><div style="color:var(--text-accent);font-weight:500;"><span style="color:#888;">${t.becausePrefix}</span> ${aiAnswers[i]}</div></div>`;
+                    currentQ = aiAnswers[i];
+                }
+
+                html += `<div class="btn-group" style="margin-top: 30px;"><button class="btn btn-action" onclick="callGradeMe(aiAnswers)">${t.aiTitleGrade} (${t.aiSelfGrade})</button></div>`;
+                document.getElementById('ai-result').innerHTML = html; 
+            }
+        }
+
+        async function callGradeMe(answersArray) {
+            const t = i18n[currentLang];
+            const pName = document.getElementById('playerName').value.trim();
+            const valA = document.getElementById('inputA').value.trim(); 
+            const valB = document.getElementById('inputB').value.trim();
+            
+            document.getElementById('ai-modal').classList.add('active');
+            document.getElementById('modal-title').innerText = t.aiTitleGrade;
+            
+            const prompt = `Strict Lean Grader. Language: ${currentLang}. Event A "${valA}" -> B "${valB}". 5Whys to grade: [${answersArray.join(" -> ")}]. Critera: 1. Logical leaps? 2. Step 5 causes B? 3. Blame humans instead of systems? Output JSON ONLY: { "score": 85, "critique": "Sharp critique paragraph..." }`;
+            const result = await fetchGemini(prompt);
+            
+            if(result) { 
+                lastEvaluationData = { name: pName, statusA: valA, resultB: valB, whys: answersArray, score: result.score, critique: result.critique };
+                
+                document.getElementById('ai-result').innerHTML = `
+                    <div style="text-align:center;"><div class="score-circle">${result.score}</div></div>
+                    <div class="ai-step"><strong>${t.critiqueTitle}</strong><br><br>${result.critique}</div>
+                    <div class="btn-group" style="margin-top: 30px;">
+                        <button class="btn btn-action" onclick="exportReportPDF()">${t.btnExport}</button>
+                    </div>
+                `; 
+            }
+        }
+
+        function exportReportPDF() {
+            if(!lastEvaluationData) return;
+            const d = lastEvaluationData;
+            const t = i18n[currentLang];
+            
+            const printArea = document.createElement('div');
+            
+            let whysHtml = d.whys.map((w, idx) => `
+                <div style="margin-bottom: 15px; padding: 15px; background: rgba(0,0,0,0.5); border-left: 3px solid #d4b886; border-radius: 6px;">
+                    <strong style="color: #d4b886;">${t.stepPrefix} ${idx + 1}:</strong> ${w}
+                </div>
+            `).join('');
+
+            printArea.innerHTML = `
+                <div style="background-color: #1e2126; color: #e0e0e0; font-family: Inter, sans-serif; min-height: 290mm; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #d4b886; font-size: 32px; margin: 0;">${t.header}</h1>
+                        <p style="color: #888; margin-top: 10px; font-size: 16px;">${t.labelPlayer} <strong style="color: #fff;">${d.name}</strong></p>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); border: 1px dashed #3b4048; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                        <div style="margin-bottom: 12px;"><strong style="color: #888;">[ ${t.labelA} ]</strong> <span style="color: #fff; margin-left: 10px;">${d.statusA}</span></div>
+                        <div><strong style="color: #888;">[ ${t.labelB} ]</strong> <span style="color: #fff; margin-left: 10px;">${d.resultB}</span></div>
+                    </div>
+                    <h3 style="color: #d4b886; border-bottom: 1px solid #3b4048; padding-bottom: 8px; margin-bottom: 20px;">5 WHYs ANALYSIS</h3>
+                    ${whysHtml}
+                </div>
+
+                <div class="html2pdf__page-break"></div>
+
+                <div style="background-color: #1e2126; color: #e0e0e0; font-family: Inter, sans-serif; min-height: 290mm; padding: 40px; box-sizing: border-box; display: flex; flex-direction: column;">
+                    <h3 style="color: #d4b886; border-bottom: 1px solid #3b4048; padding-bottom: 8px; margin-bottom: 20px;">EVALUATION SCORE</h3>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div style="display: inline-block; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; background: #d4b886; color: #000; font-size: 32px; font-weight: bold;">${d.score}</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.5); padding: 25px; border-radius: 8px; border-left: 4px solid #d4b886; margin-bottom: 30px; flex-grow: 1;">
+                        <strong style="color: #d4b886; font-size: 18px;">${t.critiqueTitle}</strong><br><br><span style="line-height: 1.8; font-size: 15px;">${d.critique}</span>
+                    </div>
+                    <div style="text-align: center; color: #666; font-size: 12px; border-top: 1px solid #3b4048; padding-top: 20px;">
+                        Generated by ${t.header} | Powered by Gemini AI
+                    </div>
+                </div>
+            `;
+
+            const opt = {
+                margin:       0,
+                filename:     `5Why_Report_${d.name}.pdf`,
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(printArea).save();
+        }
+
+        window.onload = function() { switchLang('zh'); };
+    </script>
+</body>
+</html>

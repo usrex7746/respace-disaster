@@ -11,7 +11,7 @@
             --bg-color: #000000;
             --text-offwhite: #F9F8F4;
             --text-dim: rgba(249, 248, 244, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3); /* 加深了分割线的基础色调 */
         }
 
         * { box-sizing: border-box; }
@@ -22,7 +22,6 @@
             display: flex; flex-direction: column;
         }
 
-        /* --- 顶部导航 --- */
         .header-left { position: fixed; top: 2.5rem; left: 3rem; z-index: 1001; }
         .logo-svg { width: 35px; height: 35px; cursor: pointer; transition: 0.3s; }
         .logo-svg:hover { opacity: 0.7; }
@@ -30,10 +29,9 @@
         .top-nav a { color: var(--text-offwhite); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.3rem; opacity: 0.5; transition: 0.4s; }
         .top-nav a:hover { opacity: 1; }
 
-        /* --- 背景动画 --- */
         .comet-canvas {
             position: absolute; top: 50%; left: 55%; transform: translate(-50%, -50%);
-            width: 120vh; height: 120vh; z-index: 0; pointer-events: none; opacity: 0.2; /* 调暗背景，突出核心表单 */
+            width: 120vh; height: 120vh; z-index: 0; pointer-events: none; opacity: 0.2;
         }
         .trail-path {
             fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1800; stroke-dashoffset: 1800;
@@ -41,77 +39,52 @@
         }
         @keyframes growTrail { to { stroke-dashoffset: 0; } }
 
-        /* --- 核心中央认证区 --- */
         .auth-wrapper {
             flex: 1; display: flex; justify-content: center; align-items: center;
             position: relative; z-index: 10; padding: 0 2rem;
         }
-        .auth-box {
-            width: 100%; max-width: 380px; text-align: center;
-        }
+        .auth-box { width: 100%; max-width: 380px; text-align: center; }
+        .auth-box h2 { font-size: 1.2rem; font-weight: 200; letter-spacing: 0.8rem; text-transform: uppercase; margin: 0 0 1rem 0; transform: translateX(0.4rem); }
+        .auth-desc { font-size: 0.75rem; letter-spacing: 0.1rem; color: var(--text-dim); margin-bottom: 3rem; font-weight: 300; line-height: 1.5; }
 
-        .auth-box h2 {
-            font-size: 1.2rem; font-weight: 200; letter-spacing: 0.8rem;
-            text-transform: uppercase; margin: 0 0 1rem 0;
-            transform: translateX(0.4rem); /* 修正 letter-spacing 带来的视觉偏移 */
-        }
-        .auth-desc {
-            font-size: 0.75rem; letter-spacing: 0.1rem; color: var(--text-dim);
-            margin-bottom: 3rem; font-weight: 300; line-height: 1.5;
-        }
-
-        /* 步骤切换动画 */
         .auth-step { display: none; opacity: 0; transition: opacity 0.4s ease; }
         .auth-step.active { display: block; opacity: 1; }
 
-        /* --- 极简表单元素 --- */
         .form-group { position: relative; margin-bottom: 2.5rem; text-align: left; }
-        
         .auth-box input {
-            width: 100%; background: none; border: none;
-            border-bottom: 1px solid var(--glass-border);
-            color: var(--text-offwhite); font-family: inherit; font-size: 1rem;
-            padding: 10px 0; letter-spacing: 0.1rem; transition: 0.3s;
+            width: 100%; background: none; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-offwhite); font-family: inherit; font-size: 1rem; padding: 10px 0; letter-spacing: 0.1rem; transition: 0.3s;
         }
         .auth-box input:focus { outline: none; border-bottom-color: var(--text-offwhite); }
-
         .auth-box label {
-            position: absolute; left: 0; top: 12px;
-            font-size: 0.8rem; letter-spacing: 0.2rem; color: var(--text-dim);
+            position: absolute; left: 0; top: 12px; font-size: 0.8rem; letter-spacing: 0.2rem; color: var(--text-dim);
             transition: 0.3s ease-out; pointer-events: none;
         }
-        .auth-box input:focus ~ label,
-        .auth-box input:not(:placeholder-shown) ~ label {
-            top: -16px; font-size: 0.65rem; color: var(--text-offwhite);
-        }
+        .auth-box input:focus ~ label, .auth-box input:not(:placeholder-shown) ~ label { top: -16px; font-size: 0.65rem; color: var(--text-offwhite); }
 
-        /* 大间隔的验证码输入框特效 */
         #verifyCode { text-align: center; letter-spacing: 1rem; font-size: 1.2rem; padding-left: 1rem; }
         #verifyCode ~ label { text-align: center; width: 100%; }
 
-        /* 按钮设计 */
+        /* --- 修正：去掉白框，保持极简文字风格 --- */
         .submit-btn {
-            width: 100%; background: none; border: 1px solid var(--text-offwhite);
-            color: var(--text-offwhite); padding: 1.2rem; font-family: inherit;
-            font-size: 0.8rem; font-weight: 300; text-transform: uppercase; letter-spacing: 0.4rem;
+            width: 100%; background: none; border: none; /* 去掉了边框 */
+            color: var(--text-offwhite); padding: 1.2rem;
+            font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 300; 
+            text-transform: uppercase; letter-spacing: 0.5rem;
             cursor: pointer; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .submit-btn:hover { background-color: var(--text-offwhite); color: var(--bg-color); }
+        .submit-btn:hover { opacity: 0.6; } /* 悬停时通过透明度提供反馈 */
         .submit-btn:disabled { opacity: 0.3; cursor: wait; }
 
-        .text-btn {
-            background: none; border: none; color: var(--text-dim);
-            font-family: inherit; font-size: 0.65rem; letter-spacing: 0.15rem;
-            text-transform: uppercase; margin-top: 2rem; cursor: pointer; transition: 0.3s;
-        }
-        .text-btn:hover { color: var(--text-offwhite); }
+        .text-btn { background: none; border: none; color: var(--text-dim); font-size: 0.65rem; letter-spacing: 0.15rem; text-transform: uppercase; margin-top: 2rem; cursor: pointer; }
 
-        /* 移动端适配 */
+        /* --- 修正：明显的 OR 分割线 --- */
+        .divider-container { text-align: center; margin: 3rem 0; position: relative; }
+        .divider-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255, 255, 255, 0.25); z-index: 0; }
+        .divider-text { background: var(--bg-color); padding: 0 1.5rem; color: var(--text-dim); font-size: 0.65rem; letter-spacing: 0.3rem; position: relative; z-index: 1; }
+
         @media (max-width: 768px) {
-            .top-nav {
-                top: 0; left: 0; right: 0; width: 100%; background-color: #000;
-                padding: 1.5rem 2.5rem 2rem 0; flex-direction: column; align-items: flex-end; gap: 1rem;
-            }
+            .top-nav { top: 0; left: 0; right: 0; width: 100%; background-color: #000; padding: 1.5rem 2.5rem 2rem 0; flex-direction: column; align-items: flex-end; gap: 1rem; }
             .header-left { top: 1.5rem; left: 2.5rem; }
             .auth-wrapper { padding-top: 6rem; }
         }
@@ -141,21 +114,21 @@
         <div class="auth-box">
             <h2>ACCESS</h2>
             
-        <div id="step-email" class="auth-step active">
-             <p class="auth-desc">Enter your email. New accounts will be created automatically.</p>
-             <div class="form-group">
-                 <input type="email" id="userEmail" placeholder=" " required>
-                 <label for="userEmail">EMAIL ADDRESS</label>
-             </div>
-             <button class="submit-btn" id="continueBtn" onclick="requestAccess()">CONTINUE</button>
+            <div id="step-email" class="auth-step active">
+                <p class="auth-desc">Enter your email. New accounts will be created automatically.</p>
+                <div class="form-group">
+                    <input type="email" id="userEmail" placeholder=" " required>
+                    <label for="userEmail">EMAIL ADDRESS</label>
+                </div>
+                <button class="submit-btn" id="continueBtn" onclick="requestAccess()">CONTINUE</button>
 
-             <div style="text-align: center; margin: 2rem 0; position: relative;">
-                 <span style="background: var(--bg-color); padding: 0 10px; color: var(--text-dim); font-size: 0.65rem; letter-spacing: 0.2rem; position: relative; z-index: 1;">OR</span>
-                 <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--glass-border); z-index: 0;"></div>
-             </div>
+                <div class="divider-container">
+                    <div class="divider-line"></div>
+                    <span class="divider-text">OR</span>
+                </div>
 
-             <div id="googleButtonContainer" style="display: flex; justify-content: center;"></div>
-         </div>
+                <div id="googleButtonContainer" style="display: flex; justify-content: center;"></div>
+            </div>
 
             <div id="step-code" class="auth-step">
                 <p class="auth-desc">A 6-digit code has been sent to<br><span id="displayEmail" style="color: #fff; letter-spacing: 0.05rem; font-weight: 400;"></span></p>
@@ -166,42 +139,36 @@
                 <button class="submit-btn" id="verifyBtn" onclick="verifyAndEnter()">VERIFY & ENTER</button>
                 <button class="text-btn" onclick="resetFlow()">← USE A DIFFERENT EMAIL</button>
             </div>
-
         </div>
     </main>
 
-<script>
-        // 核心修改：定义 API 基础路径
+    <script>
         const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:3000' 
-        : 'https://respace-disaster.com'; // 上线后指向你的域名
-        // 获取页面元素
+            ? 'http://localhost:3000' 
+            : 'https://respace-disaster.com';
+
         const stepEmail = document.getElementById('step-email');
         const stepCode = document.getElementById('step-code');
         const emailInput = document.getElementById('userEmail');
         const displayEmail = document.getElementById('displayEmail');
         const continueBtn = document.getElementById('continueBtn');
 
-        // 发送验证码（连接真实后端）
         async function requestAccess() {
             const email = emailInput.value.trim();
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 alert('Please enter a valid email address.');
                 return;
             }
-
             continueBtn.disabled = true;
             continueBtn.innerText = 'SENDING...';
 
             try {
-                const response = await fetch('http://localhost:3000/api/send-code', {
+                const response = await fetch(`${API_BASE_URL}/api/send-code`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
                 });
-
                 const result = await response.json();
-
                 if (response.ok) {
                     displayEmail.innerText = email;
                     stepEmail.classList.remove('active');
@@ -212,131 +179,63 @@
                         stepCode.classList.add('active');
                         document.getElementById('verifyCode').focus();
                     }, 300);
-                } else {
-                    alert('Error: ' + result.error);
-                }
-            } catch (error) {
-                console.error(error);
-                alert('后端没开，或者网络连接失败，请检查终端！');
-            } finally {
-                continueBtn.disabled = false;
-                continueBtn.innerText = 'CONTINUE';
-            }
+                } else { alert('Error: ' + result.error); }
+            } catch (error) { alert('Backend not reachable.'); }
+            finally { continueBtn.disabled = false; continueBtn.innerText = 'CONTINUE'; }
         }
 
-        // 返回上一步
-        function resetFlow() {
-            stepCode.classList.remove('active');
-            setTimeout(() => {
-                stepCode.style.display = 'none';
-                stepEmail.style.display = 'block';
-                void stepEmail.offsetWidth;
-                stepEmail.classList.add('active');
-                document.getElementById('verifyCode').value = ''; 
-            }, 300);
-        }
-
-        // 验证输入的验证码
-// 真正发送验证码去后端核对
         async function verifyAndEnter() {
             const code = document.getElementById('verifyCode').value;
-            // 获取第一步填写的邮箱
-            const email = document.getElementById('userEmail').value.trim(); 
-            
-            if(code.length !== 6) {
-                alert('Please enter the 6-digit code.');
-                return;
-            }
+            const email = emailInput.value.trim();
+            if(code.length !== 6) { alert('Please enter the 6-digit code.'); return; }
 
             const btn = document.getElementById('verifyBtn');
-            btn.disabled = true;
-            btn.innerText = 'VERIFYING...';
+            btn.disabled = true; btn.innerText = 'VERIFYING...';
 
             try {
-                // 向我们的本地后端发起验证请求
-                const response = await fetch('http://localhost:3000/api/verify-code', {
+                const response = await fetch(`${API_BASE_URL}/api/verify-code`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, code: code })
                 });
-
                 const result = await response.json();
-
                 if (response.ok) {
-                    // 验证成功！按钮变绿
-                    btn.innerText = 'ACCESS GRANTED';
-                    btn.style.color = '#37ff00';
-                    btn.style.borderColor = '#37ff00';
-
-                    // 延迟 1 秒后，携带用户状态跳转到我们刚做的控制台
-                    setTimeout(() => {
-                        window.location.href = `dashboard.html?email=${email}&isNew=${result.isNewUser}`;
-                    }, 1000);
-                } else {
-                    // 验证码错误或过期
-                    alert('Error: ' + result.error);
-                    btn.disabled = false;
-                    btn.innerText = 'VERIFY & ENTER';
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Network error. Is the backend running?');
-                btn.disabled = false;
-                btn.innerText = 'VERIFY & ENTER';
-            }
+                    btn.innerText = 'ACCESS GRANTED'; btn.style.color = '#37ff00';
+                    setTimeout(() => { window.location.href = `dashboard.html?email=${email}&isNew=${result.isNewUser}`; }, 1000);
+                } else { alert('Error: ' + result.error); btn.disabled = false; btn.innerText = 'VERIFY & ENTER'; }
+            } catch (error) { alert('Network error.'); btn.disabled = false; }
         }
 
-        // 允许在邮箱框按回车直接继续
-        emailInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') requestAccess();
-        });
-        // --- Google 登录初始化 ---
-     window.onload = function () {
-         // 1. 初始化 Google Identity Services
-         google.accounts.id.initialize({
-             client_id: "619088067618-pq0isp6slgl186o6u52lptsadrjrjn5q.apps.googleusercontent.com", // 替换成你真实的 Client ID
-             callback: handleGoogleLogin // 登录成功后的回调函数
-         });
+        function resetFlow() {
+            stepCode.classList.remove('active');
+            setTimeout(() => { stepCode.style.display = 'none'; stepEmail.style.display = 'block'; void stepEmail.offsetWidth; stepEmail.classList.add('active'); }, 300);
+        }
 
-         // 2. 渲染暗黑风格的 Google 按钮
-         google.accounts.id.renderButton(
-             document.getElementById("googleButtonContainer"),
-             { 
-                 type: "icon",          // 【关键修改】只显示 G 图标
-                 theme: "filled_black", // 暗黑背景风格
-                 size: "large",         // 保持大号尺寸以便点击
-                 shape: "circle"        // 圆形设计（如果想要方形可以改成 "rectangular"）
-             }
-         );
-        
-     };
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "619088067618-pq0isp6slgl186o6u52lptsadrjrjn5q.apps.googleusercontent.com",
+                callback: handleGoogleLogin
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("googleButtonContainer"),
+                { type: "icon", theme: "filled_black", size: "large", shape: "circle" }
+            );
+        };
 
-     // --- 处理 Google 登录成功后的回调 ---
-     async function handleGoogleLogin(response) {
-         // Google 会返回一个加密的凭证 token
-         const googleToken = response.credential;
+        async function handleGoogleLogin(response) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/google-login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: response.credential })
+                });
+                const result = await res.json();
+                if (res.ok) { window.location.href = `dashboard.html?email=${result.email}&isNew=${result.isNewUser}`; }
+                else { alert('Google Login Failed: ' + result.error); }
+            } catch (err) { alert('Backend error.'); }
+        }
 
-         try {
-             // 把 token 扔给我们的 Node.js 后端去验证
-             const res = await fetch('http://localhost:3000/api/google-login', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ token: googleToken })
-             });
-
-             const result = await res.json();
-
-             if (res.ok) {
-                 // 验证成功，直接无缝跳转到控制台！
-                 window.location.href = `dashboard.html?email=${result.email}&isNew=${result.isNewUser}`;
-             } else {
-                 alert('Google Login Failed: ' + result.error);
-             }
-         } catch (err) {
-             console.error(err);
-             alert('Network error connecting to backend.');
-         }
-     }
+        emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') requestAccess(); });
     </script>
 </body>
 </html>
