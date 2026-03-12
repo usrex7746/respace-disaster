@@ -199,7 +199,7 @@
     </div>
 
     <script>
-        
+
         const i18n = {
             zh: { 
                 header: "逻辑大师", labelPlayer: "👤 玩家姓名:", labelA: "微观现状 A:", labelB: "宏观结论 B:", 
@@ -474,7 +474,7 @@ async function fetchGemini(p) {
             startLoadingUI();
             
             // 【改动核心】：请求地址变成了我们自己的 Vercel 接口
-            const url = '/api/gemini'; 
+            const url = 'https://respace-disaster.com/api/gemini';
             
             try {
                 const response = await fetch(url, { 
