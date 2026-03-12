@@ -70,7 +70,7 @@
         .input-group { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .input-wrapper { flex: 1; display: flex; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 15px; align-items: center; transition: border-color 0.3s; }
         .input-wrapper:focus-within { border-color: var(--border-focus); }
-        .input-prefix { padding: 15px 10px 15px 0; color: #999; font-weight: 500; white-space: nowrap; min-width: 80px; }
+        .input-prefix { padding: 15px 10px 15px 0; color: #999; font-weight: 500; white-space: nowrap; min-width: 100px; }
         
         input[type="text"] { flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 15px; outline: none; padding: 15px 0; width: 100%; font-family: 'Inter', sans-serif; }
         
@@ -143,27 +143,27 @@
 
             <div class="input-group">
                 <div class="input-wrapper">
-                    <div class="input-prefix" id="label-A">现状 A:</div>
-                    <input type="text" id="inputA" placeholder="...">
+                    <div class="input-prefix" id="label-A">🚨 宏观灾难 A:</div>
+                    <input type="text" id="inputA" placeholder="例如：SpaceX 火箭发射推迟...">
                 </div>
                 <div class="dice-btn" onclick="rollDice('A')" title="随机生成">🎲</div>
             </div>
             <div class="input-group">
                 <div class="input-wrapper">
-                    <div class="input-prefix" id="label-B">结论 B:</div>
-                    <input type="text" id="inputB" placeholder="...">
+                    <div class="input-prefix" id="label-B">🔍 根本原因 B:</div>
+                    <input type="text" id="inputB" placeholder="例如：叉车点检表漏签了字...">
                 </div>
                 <div class="dice-btn" onclick="rollDice('B')" title="随机生成">🎲</div>
             </div>
             <div class="btn-group">
-                <button class="btn btn-action" id="btn-i-answer" onclick="goToAnswerView()">我来回答</button>
+                <button class="btn btn-action" id="btn-i-answer" onclick="goToAnswerView()">我来归因</button>
                 <button class="btn" id="btn-ask-ai" onclick="callAskAI()">问问 AI (大师方案)</button>
             </div>
         </div>
 
         <div id="view-answer" class="view-section">
             <div class="back-nav" id="btn-back" onclick="goToSetupView()">← 返回上一页</div>
-            <div class="target-box"><span id="label-target">目标结论：</span> <span id="target-b-text">...</span></div>
+            <div class="target-box"><span id="label-target">目标根因：</span> <span id="target-b-text" class="q-final">...</span></div>
             
             <div id="cascade-container"></div>
             
@@ -202,59 +202,62 @@
 
         const i18n = {
             zh: { 
-                header: "逻辑大师", labelPlayer: "👤 玩家姓名:", labelA: "微观现状 A:", labelB: "宏观结论 B:", 
-                btnIAnswer: "我来回答", btnAskAI: "问问 AI", btnBack: "← 返回并重置", 
-                labelTarget: "目标结论：", 
+                header: "逻辑大师", labelPlayer: "👤 玩家姓名:", labelA: "🚨 宏观灾难 A:", labelB: "🔍 根本原因 B:", 
+                btnIAnswer: "我来归因", btnAskAI: "问问 AI", btnBack: "← 返回并重置", 
+                labelTarget: "目标根因：", 
                 whyPrefix: "为什么", whySuffix: "会发生？", 
-                whyFinalPrefix: "为什么", whyFinalSuffix: "最终导致了", 
                 becausePrefix: "因为...", btnGrade: "给我评分", btnExport: "📥 导出 PDF 报告",
                 alertEmptyName: "请先填写玩家姓名！", alertEmptyAB: "请先填写或摇骰子生成 A 和 B！",
                 alertEmptyAns: "请先填写完整 5 个原因步骤，逻辑链不能断开！",
                 aiTitleAsk: "问问 AI", aiTitleGrade: "AI 评分",
                 stepPrefix: "步骤", critiqueTitle: "大师点评:", aiSelfGrade: "评估 AI 答案",
                 infoTitle: "关于 5Why 与系统",
-                infoDesc: "5Why（五个为什么）是精益生产中用于探究问题根本原因的经典工具。通过不断追问“为什么”，剥离表面症状，直击系统与流程漏洞，从而防止问题重复发生。",
-                infoPowered: "框架支持：Google Gemini<br><br>特别提示：我们通过Google Gemini API获取AI支持，AI可能犯错，结果仅供娱乐。", 
-                infoContact: "联系我："
+                infoDesc: "5Why 是一种反向溯源的精益工具。我们从【宏观灾难】出发，通过连续追问，最终挖掘出隐藏在系统深处的【微观根因】。",
+                infoPowered: "框架支持：Google Gemini<br><br>特别提示：AI生成内容仅供学习与娱乐参考。", 
+                infoContact: "联系我：",
+                placeholderA: "例如：SpaceX 火箭发射推迟...",
+                placeholderB: "例如：叉车点检表漏签了字..."
             },
             en: { 
-                header: "Lean Logic Master", labelPlayer: "👤 Player Name:", labelA: "Micro Event A:", labelB: "Macro Event B:", 
-                btnIAnswer: "I'll Answer", btnAskAI: "Ask AI", btnBack: "← Back & Reset", 
-                labelTarget: "Target Result: ", 
+                header: "Lean Logic Master", labelPlayer: "👤 Player Name:", labelA: "🚨 Macro Disaster A:", labelB: "🔍 Root Cause B:", 
+                btnIAnswer: "I'll Connect", btnAskAI: "Ask AI", btnBack: "← Back & Reset", 
+                labelTarget: "Target Root Cause: ", 
                 whyPrefix: "Why did", whySuffix: "happen?", 
-                whyFinalPrefix: "How did", whyFinalSuffix: "eventually lead to",
                 becausePrefix: "Because...", btnGrade: "Grade Me", btnExport: "📥 Export PDF Report",
                 alertEmptyName: "Please enter your Player Name first!", alertEmptyAB: "Please input or generate A and B!",
                 alertEmptyAns: "Please complete all 5 steps. The logic chain cannot be broken!",
                 aiTitleAsk: "Ask AI", aiTitleGrade: "AI Evaluation",
                 stepPrefix: "Step", critiqueTitle: "Master's Critique:", aiSelfGrade: "Evaluate AI Answer",
                 infoTitle: "About the 5Whys",
-                infoDesc: "The 5Whys is a classic Lean manufacturing tool used to explore the root cause of a problem. By repeatedly asking 'Why', we strip away surface symptoms and target system vulnerabilities.",
-                infoPowered: "Powered by: Google Gemini<br><br>Special Note: We use Google Gemini API for AI support. AI can make mistakes, results are for entertainment only.", 
-                infoContact: "Contact: "
+                infoDesc: "The 5Whys is a classic Lean tool for backward tracing. We start from a Macro Disaster and trace back to the hidden Micro Root Cause.",
+                infoPowered: "Powered by: Google Gemini<br><br>Special Note: AI results are for educational & entertainment purposes.", 
+                infoContact: "Contact: ",
+                placeholderA: "e.g., SpaceX launch delayed...",
+                placeholderB: "e.g., Forklift checklist unsigned..."
             },
             es: { 
-                header: "Maestro de Lógica Lean", labelPlayer: "👤 Nombre del Jugador:", labelA: "Evento Micro A:", labelB: "Evento Macro B:", 
-                btnIAnswer: "Yo respondo", btnAskAI: "Preguntar a IA", btnBack: "← Volver y Reiniciar", 
-                labelTarget: "Resultado Final: ", 
+                header: "Maestro de Lógica", labelPlayer: "👤 Nombre:", labelA: "🚨 Desastre Macro A:", labelB: "🔍 Causa Raíz B:", 
+                btnIAnswer: "Yo conecto", btnAskAI: "Preguntar a IA", btnBack: "← Volver y Reiniciar", 
+                labelTarget: "Causa Raíz Objetivo: ", 
                 whyPrefix: "¿Por qué ocurrió", whySuffix: "?", 
-                whyFinalPrefix: "¿Cómo es que", whyFinalSuffix: "finalmente causó",
                 becausePrefix: "Porque...", btnGrade: "Califícame", btnExport: "📥 Exportar Reporte PDF",
                 alertEmptyName: "¡Ingresa tu nombre primero!", alertEmptyAB: "¡Por favor, ingresa o genera A y B!",
-                alertEmptyAns: "¡Completa los 5 pasos primero. La cadena lógica no puede romperse!",
+                alertEmptyAns: "¡Completa los 5 pasos primero!",
                 aiTitleAsk: "Preguntar a IA", aiTitleGrade: "Evaluación de IA",
-                stepPrefix: "Paso", critiqueTitle: "Crítica del Maestro:", aiSelfGrade: "Evaluar Respuesta de IA",
+                stepPrefix: "Paso", critiqueTitle: "Crítica del Maestro:", aiSelfGrade: "Evaluar Respuesta",
                 infoTitle: "Acerca de los 5 Porqués",
-                infoDesc: "Los 5 Porqués es una herramienta clásica de manufactura esbelta. Al preguntar iterativamente '¿Por qué?', eliminamos los síntomas superficiales y atacamos las fallas del sistema.",
-                infoPowered: "Impulsado por: Google Gemini<br><br>Nota Especial: Usamos Google Gemini API. La IA puede cometer errores, los resultados son solo para entretenimiento.", 
-                infoContact: "Contacto: "
+                infoDesc: "Rastreamos desde un Desastre Macro hacia atrás hasta encontrar la Causa Raíz Micro en el sistema.",
+                infoPowered: "Impulsado por: Google Gemini", 
+                infoContact: "Contacto: ",
+                placeholderA: "Ej: Retraso en lanzamiento de SpaceX...",
+                placeholderB: "Ej: Checklist de montacargas sin firma..."
             }
         };
 
         const loadingMsgs = {
-            zh: ["> 我们正在安全连接 Gemini 数据库...", "> 身份验证通过，加载精益逻辑模型...", "> Gemini 正在深度思考中...", "> 正在匹配因果关系链条...", "> 我们获取到了相关资源，正在生成界面..."],
-            en: ["> Securely connecting to Gemini database...", "> Auth passed, loading Lean model...", "> Gemini is thinking deeply...", "> Deducing 5Why causality chain...", "> Resources acquired, generating UI..."],
-            es: ["> Conectando de forma segura a Gemini...", "> Autenticación exitosa, cargando modelo...", "> Gemini está pensando profundamente...", "> Deduciendo cadena de 5 Porqués...", "> Recursos obtenidos, generando interfaz..."]
+            zh: ["> 我们正在安全连接 Gemini 数据库...", "> 身份验证通过，加载精益逻辑模型...", "> 启动逆向归因分析...", "> 正在挖掘系统性缺陷...", "> 我们获取到了相关资源，正在生成界面..."],
+            en: ["> Securely connecting to Gemini database...", "> Auth passed, loading Lean model...", "> Starting backward causality tracing...", "> Uncovering systemic flaws...", "> Resources acquired, generating UI..."],
+            es: ["> Conectando de forma segura a Gemini...", "> Autenticación exitosa...", "> Iniciando análisis causal inverso...", "> Descubriendo fallas sistémicas...", "> Generando interfaz..."]
         };
 
         let currentLang = 'zh';
@@ -276,8 +279,13 @@
             
             document.getElementById('label-Player').innerText = t.labelPlayer;
             document.getElementById('playerName').placeholder = lang === 'zh' ? "输入姓名..." : lang === 'en' ? "Enter name..." : "Ingrese nombre...";
+            
             document.getElementById('label-A').innerText = t.labelA;
+            document.getElementById('inputA').placeholder = t.placeholderA; 
+
             document.getElementById('label-B').innerText = t.labelB;
+            document.getElementById('inputB').placeholder = t.placeholderB; 
+
             document.getElementById('btn-i-answer').innerText = t.btnIAnswer;
             document.getElementById('btn-ask-ai').innerText = t.btnAskAI;
             document.getElementById('btn-back').innerText = t.btnBack;
@@ -299,9 +307,23 @@
 
         const masterLibrary = {
             A: [
+                {zh:" SpaceX 火箭发射推迟", en:" SpaceX launch delay", es:"Retrasó lanzamiento SpaceX"},
+                {zh:" Apple 新款 iPhone 难产", en:" Apple iPhone production halt", es:"Frenó producción de iPhone"},
+                {zh:" Tesla 上海工厂停线", en:" Tesla Giga shutdown", es:" cierre Tesla"},
+                {zh:" Amazon AWS 服务器宕机", en:" Amazon AWS massive outage", es:" caída de Amazon AWS"},
+                {zh:" Boeing 全球737禁飞", en:" Boeing 737 grounding", es:" restricción Boeing 737"},
+                {zh:" BYD (比亚迪) 召回十万辆新车", en:" BYD recall 100k cars", es:" retiro de 100k autos BYD"},
+                {zh:" Microsoft 利润暴跌20%", en:" Microsoft profit drop 20%", es:" caída 20% ganancias Microsoft"},
+                {zh:" Pfizer (辉瑞) 销毁整批疫苗", en:" Pfizer scrap vaccines", es:" Pfizer desechara vacunas"},
+                {zh:" Maersk (马士基) 滞留苏伊士", en:" Maersk ship stuck in Suez", es:" barco Maersk varado"},
+                {zh:" FedEx 错过圣诞核心物流", en:" FedEx miss Christmas", es:" FedEx perdiera Navidad"},
+                {zh:" Sony PS6 主机发售延后", en:" Sony PS6 launch delay", es:"Retrasó lanzamiento Sony PS6"},
+                {zh:" Google 核心算法泄露", en:" Google core algorithm leak", es:" filtración Google"}
+            ],
+            B: [
                 {zh:"叉车点检表漏签了字", en:"Forklift checklist left unsigned", es:"Checklist de montacargas sin firma"},
                 {zh:"打印机卡纸了5分钟", en:"Printer jammed for 5 minutes", es:"Impresora atascada por 5 minutos"},
-                {zh:"地上掉了一颗M4螺丝", en:"An M4 screw dropped on floor", es:"Un tornillo M4 cayó al suelo"},
+                {zh:"地上掉了一颗螺丝", en:"An  screw dropped on floor", es:"Un tornillo  cayó al suelo"},
                 {zh:"操作工喝了一口水", en:"Operator took a sip of water", es:"El operador tomó un sorbo de agua"},
                 {zh:"车间温度升高了2度", en:"Workshop temp increased 2°", es:"Temp. del taller subió 2°"},
                 {zh:"一个空纸箱放歪了", en:"An empty carton placed crooked", es:"Caja de cartón quedó torcida"},
@@ -311,20 +333,6 @@
                 {zh:"员工手套破了一个洞", en:"A hole in employee's glove", es:"Un agujero en guante"},
                 {zh:"托盘上多了一根胶带", en:"Extra piece of tape on pallet", es:"Trozo extra de cinta en palet"},
                 {zh:"标签纸颜色稍微偏暗", en:"Label paper color is dark", es:"Color de etiqueta oscuro"}
-            ],
-            B: [
-                {zh:"导致 SpaceX 火箭发射推迟", en:"Caused SpaceX launch delay", es:"Retrasó lanzamiento SpaceX"},
-                {zh:"导致 Apple 新款 iPhone 难产", en:"Caused Apple iPhone production halt", es:"Frenó producción de iPhone"},
-                {zh:"导致 Tesla 上海工厂停线", en:"Caused Tesla Giga shutdown", es:"Causó cierre Tesla"},
-                {zh:"导致 Amazon AWS 服务器宕机", en:"Caused Amazon AWS massive outage", es:"Causó caída de Amazon AWS"},
-                {zh:"导致 Boeing 全球737禁飞", en:"Caused Boeing 737 grounding", es:"Causó restricción Boeing 737"},
-                {zh:"导致 BYD (比亚迪) 召回十万辆新车", en:"Caused BYD recall 100k cars", es:"Causó retiro de 100k autos BYD"},
-                {zh:"导致 Microsoft 利润暴跌20%", en:"Caused Microsoft profit drop 20%", es:"Causó caída 20% ganancias Microsoft"},
-                {zh:"导致 Pfizer (辉瑞) 销毁整批疫苗", en:"Caused Pfizer scrap vaccines", es:"Causó Pfizer desechara vacunas"},
-                {zh:"导致 Maersk (马士基) 滞留苏伊士", en:"Caused Maersk ship stuck in Suez", es:"Causó barco Maersk varado"},
-                {zh:"导致 FedEx 错过圣诞核心物流", en:"Caused FedEx miss Christmas", es:"Causó FedEx perdiera Navidad"},
-                {zh:"导致 Sony PS6 主机发售延后", en:"Caused Sony PS6 launch delay", es:"Retrasó lanzamiento Sony PS6"},
-                {zh:"导致 Google 核心算法泄露", en:"Caused Google core algorithm leak", es:"Causó filtración Google"}
             ]
         };
 
@@ -341,27 +349,22 @@
         let aiAnswers = []; 
         let lastEvaluationData = null; 
 
-        // 3. LLM 浪漫彩蛋逻辑
         let hasFiredLLM = false;
         function checkEasterEgg() {
             const val = document.getElementById('playerName').value.trim().toUpperCase();
             if (val === 'LLM' && !hasFiredLLM) {
                 hasFiredLLM = true;
                 let times = 0;
-                // 每隔 800ms 绽放一次，共 3 次
                 const fire = setInterval(() => {
                     confetti({
-                        particleCount: 100,
-                        spread: 80,
-                        origin: { y: 0.6 },
-                        colors: ['#d4b886', '#ff6b6b', '#1dd1a1', '#ffffff'],
-                        zIndex: 9999
+                        particleCount: 100, spread: 80, origin: { y: 0.6 },
+                        colors: ['#d4b886', '#ff6b6b', '#1dd1a1', '#ffffff'], zIndex: 9999
                     });
                     times++;
                     if (times >= 3) clearInterval(fire);
                 }, 800);
             } else if (val !== 'LLM') {
-                hasFiredLLM = false; // 删除了 LLM 重置状态，下次打字还能触发
+                hasFiredLLM = false;
             }
         }
 
@@ -402,21 +405,24 @@
         function renderCascadeUI() {
             const container = document.getElementById('cascade-container'); container.innerHTML = '';
             const t = i18n[currentLang]; 
-            const targetB = document.getElementById('target-b-text').innerText;
-            let currentQ = document.getElementById('inputA').value;
+            
+            let currentQ = document.getElementById('inputA').value; 
             
             for(let i=0; i<5; i++) {
                 if(i > 0 && userAnswers[i-1] === "") currentQ = "___"; else if (i > 0) currentQ = userAnswers[i-1];
-                let qTextHTML = i < 4 
-                    ? `${i+1}. ${t.whyPrefix} <span id="q-text-${i}" class="q-highlight">${currentQ}</span> ${t.whySuffix}` 
-                    : `5. 🎯 ${t.whyFinalPrefix} <span id="q-text-${i}" class="q-highlight">${currentQ}</span> ${t.whyFinalSuffix} <span class="q-final">${targetB}</span> ？`;
+                
+                let qTextHTML = `${i+1}. 🎯 ${t.whyPrefix} <span id="q-text-${i}" class="q-highlight">${currentQ}</span> ${t.whySuffix}`;
+                
+                if(i === 4) {
+                    qTextHTML += ` <span style="font-size:13px; color:#888; font-weight:normal;">(推导至根因 B)</span>`;
+                }
 
                 const html = `
                     <div class="cascade-item">
                         <div class="q-row">${qTextHTML}</div>
                         <div class="input-wrapper">
                             <div class="input-prefix">${t.becausePrefix}</div>
-                            <input type="text" id="a-input-${i}" value="${userAnswers[i]}" oninput="updateNextQ(${i})">
+                            <input type="text" id="a-input-${i}" value="${userAnswers[i]}" placeholder="${i === 4 ? document.getElementById('target-b-text').innerText : ''}" oninput="updateNextQ(${i})">
                         </div>
                     </div>`;
                 container.insertAdjacentHTML('beforeend', html);
@@ -444,7 +450,6 @@
             let currentLineDiv = document.createElement('div');
             loadingBox.appendChild(currentLineDiv);
 
-            // 2. 将打字速度降频：时间间隔延长一倍 (120ms)
             typewriterTimer = setInterval(() => {
                 if (line >= msgs.length) { clearInterval(typewriterTimer); return; }
                 if (charIdx < msgs[line].length) {
@@ -469,18 +474,16 @@
             document.getElementById('ai-result').style.display = 'block';
         }
 
-async function fetchGemini(p) {
+        async function fetchGemini(p) {
             document.getElementById('ai-modal').classList.add('active');
             startLoadingUI();
             
-            // 【改动核心】：请求地址变成了我们自己的 Vercel 接口
             const url = '/api/gemini';
             
             try {
                 const response = await fetch(url, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
-                    // 这里我们只需要把 prompt 传给后端，复杂的结构在后端组装
                     body: JSON.stringify({ prompt: p }) 
                 });
                 
@@ -500,7 +503,6 @@ async function fetchGemini(p) {
                     alert("API returned empty data."); closeModal('ai-modal'); return null; 
                 }
 
-                // 解析返回的文本
                 let rawText = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
                 return JSON.parse(rawText);
             } catch (error) { 
@@ -517,11 +519,13 @@ async function fetchGemini(p) {
             if(!valA || !valB) return alert(t.alertEmptyAB);
             document.getElementById('modal-title').innerText = t.aiTitleAsk;
             
-            const prompt = `Lean Operations Expert. Language: ${currentLang}. 
-            Target: Connect micro event "${valA}" to macro disaster "${valB}" in exact 5 causal steps. 
-            Rule 1: Focus on system/management (Poka-yoke, SOP). 
-            Rule 2: EXTREMELY CONCISE. Maximum 15 words per step. DO NOT explain, just state the direct short cause.
-            Output JSON format ONLY: { "whys": ["short cause 1", "short cause 2", "short cause 3", "short cause 4", "short cause 5"] }`;
+            const prompt = `You are a Lean Operations Expert. Language: ${currentLang}.
+Target: Perform a reverse 5-Why root cause analysis. Start from the macro disaster "${valA}" and logically trace back step-by-step to the predetermined micro root cause "${valB}".
+Rule 1: Focus on systemic/management failures (Poka-yoke, SOPs), do not just blame operators.
+Rule 2: EXTREMELY CONCISE. Maximum 15 words per step. DO NOT explain.
+Rule 3: Strict backward causality. Event A happened because of Step 1. Step 1 because of Step 2... Step 4 because of Step 5.
+Rule 4: Step 5 MUST explicitly be or closely paraphrase the root cause "${valB}".
+Output JSON format ONLY: { "whys": ["cause 1", "cause 2", "cause 3", "cause 4", "${valB}"] }`;
             
             const result = await fetchGemini(prompt);
             
@@ -530,7 +534,7 @@ async function fetchGemini(p) {
                 let html = ""; let currentQ = valA;
                 
                 for(let i=0; i<5; i++) {
-                    let qTextHTML = i < 4 ? `${i+1}. ${t.whyPrefix} <span class="q-highlight">${currentQ}</span> ${t.whySuffix}` : `5. 🎯 ${t.whyFinalPrefix} <span class="q-highlight">${currentQ}</span> ${t.whyFinalSuffix} <span class="q-final">${valB}</span> ？`;
+                    let qTextHTML = `${i+1}. 🎯 ${t.whyPrefix} <span class="q-highlight">${currentQ}</span> ${t.whySuffix}`;
                     html += `<div class="ai-step"><div class="q-row" style="color:#aaa;margin-bottom:8px;">${qTextHTML}</div><div style="color:var(--text-accent);font-weight:500;"><span style="color:#888;">${t.becausePrefix}</span> ${aiAnswers[i]}</div></div>`;
                     currentQ = aiAnswers[i];
                 }
@@ -549,7 +553,15 @@ async function fetchGemini(p) {
             document.getElementById('ai-modal').classList.add('active');
             document.getElementById('modal-title').innerText = t.aiTitleGrade;
             
-            const prompt = `Strict Lean Grader. Language: ${currentLang}. Event A "${valA}" -> B "${valB}". 5Whys to grade: [${answersArray.join(" -> ")}]. Critera: 1. Logical leaps? 2. Step 5 causes B? 3. Blame humans instead of systems? Output JSON ONLY: { "score": 85, "critique": "Sharp critique paragraph..." }`;
+            const prompt = `You are a Strict Lean Grader. Language: ${currentLang}.
+The user performed a 5-Why analysis tracing backward from disaster A "${valA}" to target root cause B "${valB}".
+User's 5 steps (Causes): [${answersArray.join(" -> ")}].
+Criteria:
+1. Causality: Are there logical leaps? Does each step directly cause the previous one?
+2. Alignment: Does step 5 effectively align with the target root cause "${valB}"?
+3. Lean Thinking: Did they identify system/process failures, or just superficially blame human error?
+Output JSON ONLY: { "score": 85, "critique": "A sharp, insightful critique paragraph..." }`;
+            
             const result = await fetchGemini(prompt);
             
             if(result) { 
@@ -588,7 +600,7 @@ async function fetchGemini(p) {
                         <div style="margin-bottom: 12px;"><strong style="color: #888;">[ ${t.labelA} ]</strong> <span style="color: #fff; margin-left: 10px;">${d.statusA}</span></div>
                         <div><strong style="color: #888;">[ ${t.labelB} ]</strong> <span style="color: #fff; margin-left: 10px;">${d.resultB}</span></div>
                     </div>
-                    <h3 style="color: #d4b886; border-bottom: 1px solid #3b4048; padding-bottom: 8px; margin-bottom: 20px;">5 WHYs ANALYSIS</h3>
+                    <h3 style="color: #d4b886; border-bottom: 1px solid #3b4048; padding-bottom: 8px; margin-bottom: 20px;">5 WHYs ANALYSIS (Reverse Logic)</h3>
                     ${whysHtml}
                 </div>
 
