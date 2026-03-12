@@ -1,21 +1,27 @@
 // api/gemini.js
 export default async function handler(req, res) {
-    // 1. 仅允许 POST 请求
+    // 1. 设置 CORS 响应头，允许跨域访问
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*'); // 允许所有域名访问。为了更安全，也可以将其改为 'https://www.respace-disaster.com'
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+    // 2. 处理浏览器的 OPTIONS 预检请求
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    // 3. 拦截非 POST 请求
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
-        // 2. 从前端请求中获取 prompt
         const { prompt } = req.body;
-        
-        // 3. 从 Vercel 环境变量中读取你的 API Key (绝对安全，不暴露给前端)
         const API_KEY = process.env.GEMINI_API_KEY;
-        
-        // Google Gemini API 的官方请求地址 (这里建议用 1.5-flash，更稳定)
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-        // 4. 在云端向 Google 发起真实的请求
         const googleResponse = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -27,12 +33,10 @@ export default async function handler(req, res) {
 
         const data = await googleResponse.json();
 
-        // 5. 检查 Google 的响应是否有错误
         if (!googleResponse.ok) {
             return res.status(googleResponse.status).json({ error: data });
         }
 
-        // 6. 将 Google 返回的干净数据转发回你的前端
         return res.status(200).json(data);
 
     } catch (error) {
