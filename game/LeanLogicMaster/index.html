@@ -474,7 +474,7 @@ async function fetchGemini(p) {
             startLoadingUI();
             
             // 【改动核心】：请求地址变成了我们自己的 Vercel 接口
-            const url = 'https://respace-disaster.com/api/gemini';
+            const url = '/api/gemini';
             
             try {
                 const response = await fetch(url, { 
