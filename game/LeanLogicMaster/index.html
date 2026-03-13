@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <meta name="description" content="Integrating disaster risk analysis, spatial systems, and digital technologies, Respace Disaster builds a resilience-centric platform for disaster mitigation. Supported by tech products, consulting, and education, we create a closed-loop ecosystem for disaster management and educational empowerment.">
     <meta http-equiv="content-language" content="en, zh, es">
@@ -46,14 +46,11 @@
         }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); }
-        
         .logo { font-size: 18px; font-weight: 600; color: var(--text-accent); display: flex; align-items: center; gap: 10px; text-decoration: none; transition: opacity 0.3s; }
         .logo:hover { opacity: 0.8; }
-        
         .nav-icons { display: flex; gap: 15px; align-items: center; }
         .icon-btn { font-size: 24px; color: #aaa; cursor: pointer; transition: color 0.3s; user-select: none; }
         .icon-btn:hover { color: var(--text-accent); }
-        
         .lang-container { position: relative; }
         .lang-menu { display: none; position: absolute; right: 0; top: 35px; background: #1e2126; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.8); z-index: 100; }
         .lang-menu.show { display: block; }
@@ -63,6 +60,18 @@
         .main-card { background-color: var(--card-bg); max-width: 800px; margin: 40px auto; padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(5px); }
         .header-title { text-align: center; font-size: 28px; font-weight: 600; color: var(--text-accent); margin-bottom: 40px; }
         
+        /* 📱 响应式布局优化 */
+        #cascade-container { display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .main-card { margin: 10px auto; padding: 20px; max-width: 95%; }
+            .header-title { display: none; } 
+            .top-bar { padding: 5px 30px; }
+            #cascade-container { grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+            .cascade-item:last-child { grid-column: span 2; }
+            .input-prefix { min-width: 80px !important; font-size: 13px !important; }
+        }
+
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -323,7 +332,7 @@
             B: [
                 {zh:"叉车点检表漏签了字", en:"Forklift checklist left unsigned", es:"Checklist de montacargas sin firma"},
                 {zh:"打印机卡纸了5分钟", en:"Printer jammed for 5 minutes", es:"Impresora atascada por 5 minutos"},
-                {zh:"地上掉了一颗螺丝", en:"An  screw dropped on floor", es:"Un tornillo  cayó al suelo"},
+                {zh:"地上掉了一颗螺丝", en:"An  screw dropped on floor", es:"Un tornillo  cayó al suelo"},
                 {zh:"操作工喝了一口水", en:"Operator took a sip of water", es:"El operador tomó un sorbo de agua"},
                 {zh:"车间温度升高了2度", en:"Workshop temp increased 2°", es:"Temp. del taller subió 2°"},
                 {zh:"一个空纸箱放歪了", en:"An empty carton placed crooked", es:"Caja de cartón quedó torcida"},
@@ -405,24 +414,29 @@
         function renderCascadeUI() {
             const container = document.getElementById('cascade-container'); container.innerHTML = '';
             const t = i18n[currentLang]; 
+            const valB = document.getElementById('target-b-text').innerText;
             
             let currentQ = document.getElementById('inputA').value; 
             
             for(let i=0; i<5; i++) {
+                const isLast = (i === 4);
+                if(isLast) userAnswers[i] = valB; // 逻辑层锁定最后一行
+
                 if(i > 0 && userAnswers[i-1] === "") currentQ = "___"; else if (i > 0) currentQ = userAnswers[i-1];
                 
                 let qTextHTML = `${i+1}. 🎯 ${t.whyPrefix} <span id="q-text-${i}" class="q-highlight">${currentQ}</span> ${t.whySuffix}`;
                 
-                if(i === 4) {
-                    qTextHTML += ` <span style="font-size:13px; color:#888; font-weight:normal;">(推导至根因 B)</span>`;
-                }
-
                 const html = `
                     <div class="cascade-item">
                         <div class="q-row">${qTextHTML}</div>
-                        <div class="input-wrapper">
+                        <div class="input-wrapper" style="${isLast ? 'opacity: 0.8; border-color: var(--text-accent);' : ''}">
                             <div class="input-prefix">${t.becausePrefix}</div>
-                            <input type="text" id="a-input-${i}" value="${userAnswers[i]}" placeholder="${i === 4 ? document.getElementById('target-b-text').innerText : ''}" oninput="updateNextQ(${i})">
+                            <input type="text" id="a-input-${i}" 
+                                   value="${userAnswers[i]}" 
+                                   ${isLast ? 'readonly' : ''} 
+                                   placeholder="${isLast ? '' : '输入归因原因...'}" 
+                                   onfocus="this.scrollIntoView({behavior:'smooth', block:'center'})"
+                                   oninput="updateNextQ(${i})">
                         </div>
                     </div>`;
                 container.insertAdjacentHTML('beforeend', html);
