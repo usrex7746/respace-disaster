@@ -157,6 +157,7 @@
             let savedLang = localStorage.getItem('respace_lang');
             
             // 如果是第一次访问，或者存储的值不在我们的翻译包里，强制为 en
+            // 这避免了用户在第一次访问时看到错误的语言代码，或者在存储了无效值后看到空白
             if (!savedLang || !translations[savedLang]) {
                 savedLang = 'en';
             }
