@@ -1,12 +1,12 @@
 const { OAuth2Client } = require('google-auth-library');
-const { Resend } = require('resend'); // 新增：引入 Resend
+const { Resend } = require('resend'); 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const resend = new Resend(process.env.RESEND_API_KEY); // 新增：初始化 Resend
+const resend = new Resend(process.env.RESEND_API_KEY); 
 
 app.use(cors({
     origin: [
@@ -21,7 +21,7 @@ app.use(express.json());
 
 // 临时数据库
 let users = []; 
-const verificationCodes = new Map(); // 新增：用于临时存储验证码 { email: { code, expiresAt } }
+const verificationCodes = new Map(); 
 
 // --- 接口 1: 检查用户是否存在 ---
 app.post('/api/check-user', (req, res) => {
@@ -30,59 +30,64 @@ app.post('/api/check-user', (req, res) => {
     res.json({ isNew: !user });
 });
 
-// --- 新增：接口 5: 发送验证码 ---
+// --- 接口 5: 发送验证码 (已加入增强错误捕获) ---
 app.post('/api/send-code', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: "Email is required" });
 
-    // 检查是否已注册
     if (users.find(u => u.email === email)) {
         return res.status(400).json({ error: "User already exists" });
     }
 
-    // 生成 6 位数字验证码
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // 设置验证码，5 分钟后过期
     verificationCodes.set(email, {
         code: code,
         expiresAt: Date.now() + 5 * 60 * 1000 
     });
 
     try {
-        await resend.emails.send({
-            from: 'noreply@respace-disaster.com', // 请确保此发件人地址正确
+        // 修改点：解构出 error 对象以获取详细原因
+        const { data, error } = await resend.emails.send({
+            from: 'noreply@respace-disaster.com', 
             to: email,
             subject: '您的注册验证码 - Respace Disaster',
             html: `<p>您的验证码是：<strong>${code}</strong>。该验证码在 5 分钟内有效，请勿泄露给他人。</p>`
         });
+
+        // 如果 Resend 返回了错误（例如 Key 错误、发件人未验证等）
+        if (error) {
+            console.error("Resend API Error Details:", error);
+            return res.status(400).json({ error: `Mail service error: ${error.message}` });
+        }
+
+        console.log("Mail sent successfully:", data.id);
         res.json({ success: true, message: "Verification code sent" });
+
     } catch (err) {
-        console.error("Resend API Error:", err);
-        res.status(500).json({ error: "Failed to send verification code" });
+        // 捕获网络异常或代码崩溃
+        console.error("Server Side Fatal Error:", err);
+        res.status(500).json({ error: "Server Error: " + err.message });
     }
 });
 
-// --- 修改：接口 2: 注册 (加入验证码校验) ---
+// --- 接口 2: 注册 ---
 app.post('/api/register', (req, res) => {
-    const { email, password, code } = req.body; // 接收前端传来的 code
+    const { email, password, code } = req.body; 
 
-    // 1. 校验验证码是否存在及是否匹配
     const record = verificationCodes.get(email);
     if (!record) return res.status(400).json({ error: "Please request a verification code first" });
     if (record.code !== code) return res.status(400).json({ error: "Invalid verification code" });
     
-    // 2. 校验验证码是否过期
     if (Date.now() > record.expiresAt) {
         verificationCodes.delete(email);
         return res.status(400).json({ error: "Verification code expired" });
     }
 
-    // 3. 正常注册逻辑
     if (users.find(u => u.email === email)) return res.status(400).json({ error: "User exists" });
     
     users.push({ email, password, method: 'email' });
-    verificationCodes.delete(email); // 注册成功后，清理已使用的验证码
+    verificationCodes.delete(email); 
     res.json({ success: true });
 });
 
